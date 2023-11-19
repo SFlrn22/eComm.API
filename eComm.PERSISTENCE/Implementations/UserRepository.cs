@@ -15,19 +15,11 @@ namespace eComm.PERSISTENCE.Implementations
         }
         public async Task<User> GetUser(string username)
         {
-            try
+            using (var connection = _connectionFactory.CreateConnection())
             {
-                using (var connection = _connectionFactory.CreateConnection())
-                {
-                    var parameters = new DynamicParameters();
-                    parameters.Add("Username", username, dbType: DbType.String);
-                    return await connection.QueryFirstOrDefaultAsync<User>(GET_USER, parameters, commandType: CommandType.StoredProcedure);
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.Write(ex.Message.ToString());
-                throw;
+                var parameters = new DynamicParameters();
+                parameters.Add("Username", username, dbType: DbType.String);
+                return await connection.QueryFirstOrDefaultAsync<User>(GET_USER, parameters, commandType: CommandType.StoredProcedure);
             }
         }
     }
