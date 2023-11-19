@@ -9,6 +9,7 @@ namespace eComm.APPLICATION
         public static IServiceCollection AddApplicationServices(this IServiceCollection services)
         {
             services.AddScoped<ILoginService, LoginService>();
+            services.AddScoped<IRecommenderService, RecommenderService>();
             return services;
         }
     }

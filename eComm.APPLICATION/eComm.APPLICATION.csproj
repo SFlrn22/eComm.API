@@ -17,6 +17,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\eComm.DOMAIN\eComm.DOMAIN.csproj" />
+    <ProjectReference Include="..\eComm.INFRASTRUCTURE\eComm.INFRASTRUCTURE.csproj" />
     <ProjectReference Include="..\eComm.PERSISTENCE\eComm.PERSISTENCE.csproj" />
   </ItemGroup>
 

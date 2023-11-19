@@ -1,4 +1,5 @@
 using eComm.APPLICATION;
+using eComm.INFRASTRUCTURE;
 using eComm.PERSISTENCE;
 using eComm.PERSISTENCE.Helpers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -9,8 +10,8 @@ using Serilog.Sinks.MSSqlServer;
 using System.Text;
 
 
-
 var builder = WebApplication.CreateBuilder(args);
+
 IConfiguration config = new ConfigurationBuilder()
     .AddJsonFile("appsettings.json")
     .Build();
@@ -27,10 +28,13 @@ var logger = new LoggerConfiguration().WriteTo
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
 builder.Logging.ClearProviders();
 builder.Logging.AddSerilog(logger);
+
 builder.Services.AddPersistenceServices();
 builder.Services.AddApplicationServices();
+builder.Services.AddInfrastructureServices();
 
 builder.Services.AddCors(options =>
 {

@@ -25,7 +25,7 @@ namespace eComm.APPLICATION.Implementations
 
         public async Task<AuthResponse> Authenticate(UserLoginRequest request)
         {
-            _logger.LogTrace($"Auth request at {DateTime.Now}");
+            _logger.LogInformation($"Auth request at {DateTime.Now}");
             AuthResponse resp = new AuthResponse();
             User returnedUser = new User();
             try
