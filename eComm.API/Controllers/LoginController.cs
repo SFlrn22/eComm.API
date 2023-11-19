@@ -1,9 +1,10 @@
-﻿using eComm.APPLICATION.ExtensionMethods;
-using eComm.APPLICATION.Implementations;
+﻿using eComm.APPLICATION.Contracts;
+using eComm.APPLICATION.ExtensionMethods;
 using eComm.DOMAIN.Requests;
 using eComm.DOMAIN.Responses;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 
 namespace eComm.API.Controllers
 {
@@ -11,8 +12,8 @@ namespace eComm.API.Controllers
     [ApiController]
     public class LoginController : Controller
     {
-        private readonly LoginService _loginService;
-        public LoginController(LoginService loginService)
+        private readonly ILoginService _loginService;
+        public LoginController(ILoginService loginService)
         {
             _loginService = loginService;
         }
@@ -26,7 +27,7 @@ namespace eComm.API.Controllers
 
             AuthResponse response = await _loginService.Authenticate(userCredentials);
 
-            if (response.Message != null)
+            if (!response.Message.IsNullOrEmpty())
                 return BadRequest(response.Message);
 
             var returnedUser = response.User.ToUserDTO();

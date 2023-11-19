@@ -36,6 +36,7 @@ namespace eComm.APPLICATION.Implementations
                 return resp;
             }
             string token = _authHelper.Generate(resp.User!);
+            resp.User = returnedUser;
             resp.Token = token;
             return resp;
 
