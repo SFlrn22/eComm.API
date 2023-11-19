@@ -20,5 +20,11 @@ namespace eComm.API.Controllers
             List<string> result = await _recommenderService.GetTopTen();
             return Ok(result);
         }
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetRecommendedItemsForId([FromQuery] string id)
+        {
+            List<string> result = await _recommenderService.GetRecommendedItemsForId(id);
+            return Ok(result);
+        }
     }
 }

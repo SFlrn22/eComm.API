@@ -13,18 +13,29 @@ namespace eComm.APPLICATION.Implementations
             _externalRepository = externalRepository;
             _logger = logger;
         }
+
+        public async Task<List<string>> GetRecommendedItemsForId(string id)
+        {
+            _logger.LogInformation($"GetTopTen request la data {DateTime.Now}");
+            try
+            {
+                List<string> topTen = await _externalRepository.GetRecommendedItemsForId(id);
+                return topTen;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogInformation($"Eroare GetTopTen request la data {DateTime.Now}", ex.Message.ToString());
+                throw;
+            }
+        }
+
         public async Task<List<string>> GetTopTen()
         {
             _logger.LogInformation($"GetTopTen request la data {DateTime.Now}");
             try
             {
                 List<string> topTen = await _externalRepository.GetTopTen();
-                List<string> formattedResuult = new List<string>();
-                foreach (string item in topTen)
-                {
-                    formattedResuult.Add(item.Substring(1, item.Length - 4).Trim());
-                }
-                return formattedResuult;
+                return topTen;
             }
             catch (Exception ex)
             {
