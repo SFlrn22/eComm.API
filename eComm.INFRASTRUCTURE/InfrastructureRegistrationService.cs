@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace eComm.INFRASTRUCTURE
+﻿namespace eComm.INFRASTRUCTURE
 {
-    internal class InfrastructureRegistrationService
+    public static class InfrastructureRegistrationService
     {
     }
 }

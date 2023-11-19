@@ -1,6 +1,7 @@
-﻿using eComm.APPLICATION.Helpers;
+﻿using eComm.APPLICATION.ExtensionMethods;
 using eComm.APPLICATION.Implementations;
 using eComm.DOMAIN.Requests;
+using eComm.DOMAIN.Responses;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -21,20 +22,16 @@ namespace eComm.API.Controllers
         public async Task<IActionResult> Login([FromBody] UserLoginRequest userCredentials)
         {
             if (userCredentials == null)
-                return BadRequest(ModelState);
+                return BadRequest();
 
-            var userExistent = _loginService.Authenticate(userCredentials);
+            AuthResponse response = await _loginService.Authenticate(userCredentials);
 
-            if (userExistent == null)
-                return NotFound();
+            if (response.Message != null)
+                return BadRequest(response.Message);
 
-            var token = AuthHelper.Generate(userExistent);
-            //var returnedUser = _mapper.Map<UserDTO>(userExistent);
+            var returnedUser = response.User.ToUserDTO();
 
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            return Ok(new { User = returnedUser, Token = token });
+            return Ok(new { User = returnedUser, AuthToken = response.Token });
 
         }
     }

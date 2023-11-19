@@ -1,12 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using eComm.PERSISTENCE.Contracts;
+using eComm.PERSISTENCE.Implementations;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace eComm.PERSISTENCE
 {
-    internal class PersistenceRegistrationService
+    public static class PersistenceRegistrationService
     {
+        public static IServiceCollection AddPersistenceServices(this IServiceCollection services)
+        {
+            services.AddScoped<IDatabaseConnectionFactory, DatabaseConnectionFactory>();
+            services.AddScoped<IUserRepository, UserRepository>();
+            return services;
+        }
     }
 }
