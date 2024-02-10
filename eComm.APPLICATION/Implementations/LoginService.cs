@@ -54,5 +54,37 @@ namespace eComm.APPLICATION.Implementations
             return resp;
 
         }
+
+        public async Task<string> Register(UserCreateRequest request)
+        {
+            _logger.LogCritical($"Register request at {DateTime.Now}");
+            User returnedUser = new User();
+            try
+            {
+                returnedUser = await _userRepository.GetUser(request.UserName);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Eroare auth la {DateTime.Now}", ex.Message.ToString());
+                return "Eroare query";
+            }
+            if (returnedUser != null)
+            {
+                if (returnedUser.Email == request.Email)
+                {
+                    return "Exista deja un cont cu aceasta adresa de email";
+                }
+                else if (returnedUser.Username == request.UserName)
+                {
+                    return "Exista deja un cont cu acest username";
+                }
+            }
+            int resp = await _userRepository.CreateUser(request);
+            if (resp == 0)
+            {
+                return "Userul nu a putut fi creat";
+            }
+            return "Success";
+        }
     }
 }

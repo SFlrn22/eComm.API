@@ -28,12 +28,28 @@ namespace eComm.API.Controllers
             AuthResponse response = await _loginService.Authenticate(userCredentials);
 
             if (!response.Message.IsNullOrEmpty())
-                return BadRequest(response.Message);
+                return Ok(new { message = response.Message });
 
             var returnedUser = response.User.ToUserDTO();
 
             return Ok(new { User = returnedUser, AuthToken = response.Token });
 
+        }
+        [AllowAnonymous]
+        [HttpPost]
+        public async Task<IActionResult> Register([FromBody] UserCreateRequest request)
+        {
+            if (request == null)
+                return BadRequest();
+
+            string resp = await _loginService.Register(request);
+
+            if (resp != "Success")
+            {
+                return BadRequest(resp);
+            }
+
+            return Ok("User creat cu succes");
         }
     }
 }
