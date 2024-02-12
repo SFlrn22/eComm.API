@@ -1,10 +1,8 @@
 ﻿using eComm.APPLICATION.Contracts;
-using eComm.APPLICATION.ExtensionMethods;
 using eComm.DOMAIN.Requests;
 using eComm.DOMAIN.Responses;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
 
 namespace eComm.API.Controllers
 {
@@ -19,37 +17,35 @@ namespace eComm.API.Controllers
         }
 
         [AllowAnonymous]
-        [HttpPost]
+        [HttpPost("/api/Login")]
         public async Task<IActionResult> Login([FromBody] UserLoginRequest userCredentials)
         {
             if (userCredentials == null)
                 return BadRequest();
 
-            AuthResponse response = await _loginService.Authenticate(userCredentials);
+            BaseResponse<AuthResponse> response = await _loginService.Authenticate(userCredentials);
 
-            if (!response.Message.IsNullOrEmpty())
-                return Ok(new { message = response.Message });
+            if (!response.IsSuccess)
+                return BadRequest(response);
 
-            var returnedUser = response.User.ToUserDTO();
-
-            return Ok(new { User = returnedUser, AuthToken = response.Token });
+            return Ok(response);
 
         }
         [AllowAnonymous]
-        [HttpPost]
+        [HttpPost("/api/Register")]
         public async Task<IActionResult> Register([FromBody] UserCreateRequest request)
         {
             if (request == null)
                 return BadRequest();
 
-            string resp = await _loginService.Register(request);
+            BaseResponse<string> response = await _loginService.Register(request);
 
-            if (resp != "Success")
+            if (!response.IsSuccess)
             {
-                return BadRequest(resp);
+                return BadRequest(response);
             }
 
-            return Ok("User creat cu succes");
+            return Ok(response);
         }
     }
 }

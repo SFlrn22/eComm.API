@@ -1,4 +1,5 @@
 ﻿using eComm.APPLICATION.Contracts;
+using eComm.APPLICATION.ExtensionMethods;
 using eComm.APPLICATION.Helpers;
 using eComm.DOMAIN.Models;
 using eComm.DOMAIN.Requests;
@@ -23,9 +24,14 @@ namespace eComm.APPLICATION.Implementations
             _logger = logger;
         }
 
-        public async Task<AuthResponse> Authenticate(UserLoginRequest request)
+        public async Task<BaseResponse<AuthResponse>> Authenticate(UserLoginRequest request)
         {
             _logger.LogCritical($"Auth request at {DateTime.Now}");
+            BaseResponse<AuthResponse> response = new()
+            {
+                IsSuccess = true,
+                Message = "Login successful"
+            };
             AuthResponse resp = new AuthResponse();
             User returnedUser = new User();
             try
@@ -35,30 +41,46 @@ namespace eComm.APPLICATION.Implementations
             catch (Exception ex)
             {
                 _logger.LogError($"Eroare auth la {DateTime.Now}", ex.Message.ToString());
-                resp.Message = "Exceptie, verifica logs";
-                return resp;
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+                return response;
             }
             if (returnedUser == null)
             {
-                resp.Message = "Userul nu a fost gasit";
-                return resp;
+                response.IsSuccess = false;
+                response.Message = "Userul nu a fost gasit";
+                return response;
             }
             if (returnedUser.Password != request.Password)
             {
-                resp.Message = "Username sau parola gresita";
-                return resp;
+                response.IsSuccess = false;
+                response.Message = "Username sau parola gresita";
+                return response;
             }
-            string token = _authHelper.Generate(resp.User!);
-            resp.User = returnedUser;
-            resp.Token = token;
-            return resp;
 
+            string token = _authHelper.Generate(returnedUser);
+            resp.User = returnedUser.ToUserDTO();
+            resp.Token = token;
+            response.Data = resp;
+
+            return response;
         }
 
-        public async Task<string> Register(UserCreateRequest request)
+        public async Task<BaseResponse<string>> Register(UserCreateRequest request)
         {
+            int resp = 0;
+            string identifier = Guid.NewGuid().ToString();
+
             _logger.LogCritical($"Register request at {DateTime.Now}");
+
+            BaseResponse<string> response = new()
+            {
+                IsSuccess = true,
+                Message = "Register successful"
+            };
+
             User returnedUser = new User();
+
             try
             {
                 returnedUser = await _userRepository.GetUser(request.UserName);
@@ -66,25 +88,46 @@ namespace eComm.APPLICATION.Implementations
             catch (Exception ex)
             {
                 _logger.LogError($"Eroare auth la {DateTime.Now}", ex.Message.ToString());
-                return "Eroare query";
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+                return response;
             }
             if (returnedUser != null)
             {
                 if (returnedUser.Email == request.Email)
                 {
-                    return "Exista deja un cont cu aceasta adresa de email";
+                    response.IsSuccess = false;
+                    response.Message = "Exista deja un cont cu aceasta adresa de email";
+                    return response;
                 }
                 else if (returnedUser.Username == request.UserName)
                 {
-                    return "Exista deja un cont cu acest username";
+                    response.IsSuccess = false;
+                    response.Message = "Exista deja un cont cu acest username";
+                    return response;
                 }
             }
-            int resp = await _userRepository.CreateUser(request);
+
+            try
+            {
+                resp = await _userRepository.CreateUser(request, identifier);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Eroare auth la {DateTime.Now}", ex.Message.ToString());
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+                return response;
+            }
+
             if (resp == 0)
             {
-                return "Userul nu a putut fi creat";
+                response.IsSuccess = false;
+                response.Message = "Userul nu a putut fi creat";
+                return response;
             }
-            return "Success";
+
+            return response;
         }
     }
 }

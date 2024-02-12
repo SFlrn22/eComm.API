@@ -16,7 +16,7 @@ namespace eComm.PERSISTENCE.Implementations
             _connectionFactory = connectionFactory;
         }
 
-        public async Task<int> CreateUser(UserCreateRequest request)
+        public async Task<int> CreateUser(UserCreateRequest request, string identifier)
         {
             using (var connection = _connectionFactory.CreateConnection())
             {
@@ -24,6 +24,7 @@ namespace eComm.PERSISTENCE.Implementations
                 parameters.Add("username", request.UserName, dbType: DbType.String);
                 parameters.Add("password", request.Password, dbType: DbType.String);
                 parameters.Add("email", request.Email, dbType: DbType.String);
+                parameters.Add("identifier", identifier, dbType: DbType.String);
                 return await connection.ExecuteAsync(CREATE_USER, parameters, commandType: CommandType.StoredProcedure);
             }
         }

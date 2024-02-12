@@ -5,7 +5,7 @@ namespace eComm.APPLICATION.Contracts
 {
     public interface ILoginService
     {
-        Task<AuthResponse> Authenticate(UserLoginRequest request);
-        Task<string> Register(UserCreateRequest request);
+        Task<BaseResponse<AuthResponse>> Authenticate(UserLoginRequest request);
+        Task<BaseResponse<string>> Register(UserCreateRequest request);
     }
 }
