@@ -10,6 +10,7 @@ namespace eComm.APPLICATION
         {
             services.AddScoped<ILoginService, LoginService>();
             services.AddScoped<IRecommenderService, RecommenderService>();
+            services.AddScoped<IProductService, ProductService>();
             return services;
         }
     }

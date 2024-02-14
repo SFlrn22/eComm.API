@@ -10,6 +10,7 @@ namespace eComm.PERSISTENCE
         {
             services.AddScoped<IDatabaseConnectionFactory, DatabaseConnectionFactory>();
             services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IProductRepository, ProductRepository>();
             return services;
         }
     }
