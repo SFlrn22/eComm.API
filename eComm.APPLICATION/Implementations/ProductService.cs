@@ -11,15 +11,18 @@ namespace eComm.APPLICATION.Implementations
     {
         private readonly IProductRepository _productRepository;
         private readonly ILogger<ProductService> _logger;
-        public ProductService(IProductRepository productRepository, ILogger<ProductService> logger)
+        private readonly IShareService _shareService;
+        public ProductService(IProductRepository productRepository, ILogger<ProductService> logger, IShareService shareService)
         {
             _productRepository = productRepository;
             _logger = logger;
+            _shareService = shareService;
         }
 
         public async Task<BaseResponse<Product>> GetProduct(int id)
         {
-            _logger.LogCritical($"GetProduct request at {DateTime.Now}");
+            string identifier = _shareService.GetValue();
+            _logger.LogCritical($"GetProduct request at {DateTime.Now}", _shareService.GetUsername(), _shareService.GetValue());
 
             BaseResponse<Product> response = new()
             {
@@ -34,7 +37,7 @@ namespace eComm.APPLICATION.Implementations
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Eroare GetProduct la {DateTime.Now}", ex.Message.ToString());
+                _logger.LogError($"Eroare GetProduct la {DateTime.Now}", ex.Message.ToString(), _shareService.GetUsername(), _shareService.GetValue());
                 response.IsSuccess = false;
                 response.Message = ex.Message;
                 return response;
@@ -45,7 +48,7 @@ namespace eComm.APPLICATION.Implementations
 
         public async Task<BaseResponse<List<ProductDTO>>> GetProducts(int pageNumber, int itemsPerPage, string? sortingColumn, string? sortingType)
         {
-            _logger.LogCritical($"GetProducts request at {DateTime.Now}");
+            _logger.LogCritical($"GetProducts request at {DateTime.Now}", _shareService.GetUsername(), _shareService.GetValue());
 
             BaseResponse<List<ProductDTO>> response = new()
             {
@@ -60,7 +63,7 @@ namespace eComm.APPLICATION.Implementations
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Eroare GetProduct la {DateTime.Now}", ex.Message.ToString());
+                _logger.LogError($"Eroare GetProduct la {DateTime.Now}", ex.Message.ToString(), _shareService.GetUsername(), _shareService.GetValue());
                 response.IsSuccess = false;
                 response.Message = ex.Message;
                 return response;

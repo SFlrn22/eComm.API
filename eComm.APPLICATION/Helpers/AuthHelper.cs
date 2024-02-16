@@ -19,12 +19,15 @@ namespace eComm.APPLICATION.Helpers
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]!));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
+            string sessionidentifier = Guid.NewGuid().ToString();
+
             var claims = new[]
             {
                 new Claim(ClaimTypes.NameIdentifier, user.Username),
                 new Claim(ClaimTypes.Email, user.Email),
                 new Claim(ClaimTypes.GivenName, user.Firstname),
                 new Claim(ClaimTypes.Surname, user.Lastname),
+                new Claim(type: "Identifier", value: sessionidentifier)
             };
 
             var token = new JwtSecurityToken(_config["Jwt:Issuer"],

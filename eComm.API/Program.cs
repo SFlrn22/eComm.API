@@ -1,3 +1,4 @@
+using eComm.API.TokenHandlerMiddleware;
 using eComm.APPLICATION;
 using eComm.INFRASTRUCTURE;
 using eComm.PERSISTENCE;
@@ -7,6 +8,8 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Serilog;
 using Serilog.Sinks.MSSqlServer;
+using System.Collections.ObjectModel;
+using System.Data;
 using System.Text;
 
 
@@ -15,14 +18,24 @@ var builder = WebApplication.CreateBuilder(args);
 IConfiguration config = new ConfigurationBuilder()
     .AddJsonFile("appsettings.json")
     .Build();
+
+var columnOptions = new ColumnOptions
+{
+    AdditionalColumns = new Collection<SqlColumn>()
+    {
+        new SqlColumn("Username", SqlDbType.VarChar),
+        new SqlColumn("SessionIdentifier", SqlDbType.UniqueIdentifier)
+    }
+};
+
 var logger = new LoggerConfiguration().WriteTo
     .MSSqlServer(AesDecryptHelper.Decrypt("supersecretKEYThatIsHardToGuesSS", config.GetSection("ConnectionStrings:DefaultConnection").Value!),
         new MSSqlServerSinkOptions
         {
             TableName = "Logs",
             SchemaName = "dbo",
-            AutoCreateSqlTable = true
-        })
+            AutoCreateSqlTable = true,
+        }, columnOptions: columnOptions)
     .CreateLogger();
 
 builder.Services.AddControllers();
@@ -96,6 +109,8 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseCors();
+
+app.UseMiddleware<TokenHandlerMiddleware>();
 
 app.UseAuthorization();
 
