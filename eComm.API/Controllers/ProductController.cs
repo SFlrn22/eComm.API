@@ -50,5 +50,11 @@ namespace eComm.API.Controllers
 
             return Ok(response);
         }
+        [Authorize]
+        [HttpPost("/api/GetProductByVoice")]
+        public async Task<IActionResult> GetProductByVoice(IFormFile file)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

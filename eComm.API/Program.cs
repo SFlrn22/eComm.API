@@ -36,6 +36,7 @@ var logger = new LoggerConfiguration().WriteTo
             SchemaName = "dbo",
             AutoCreateSqlTable = true,
         }, columnOptions: columnOptions)
+    .Enrich.FromLogContext()
     .CreateLogger();
 
 builder.Services.AddControllers();

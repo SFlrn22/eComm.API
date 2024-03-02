@@ -4,6 +4,7 @@ using eComm.DOMAIN.Models;
 using eComm.DOMAIN.Responses;
 using eComm.PERSISTENCE.Contracts;
 using Microsoft.Extensions.Logging;
+using Serilog.Context;
 
 namespace eComm.APPLICATION.Implementations
 {
@@ -21,8 +22,9 @@ namespace eComm.APPLICATION.Implementations
 
         public async Task<BaseResponse<Product>> GetProduct(int id)
         {
-            string identifier = _shareService.GetValue();
-            _logger.LogCritical($"GetProduct request at {DateTime.Now}", _shareService.GetUsername(), _shareService.GetValue());
+            LogContext.PushProperty("Username", _shareService.GetUsername());
+            LogContext.PushProperty("SessionIdentifier", _shareService.GetValue());
+            _logger.LogCritical($"GetProduct request at {DateTime.Now}");
 
             BaseResponse<Product> response = new()
             {
@@ -48,7 +50,9 @@ namespace eComm.APPLICATION.Implementations
 
         public async Task<BaseResponse<List<ProductDTO>>> GetProducts(int pageNumber, int itemsPerPage, string? sortingColumn, string? sortingType)
         {
-            _logger.LogCritical($"GetProducts request at {DateTime.Now}", _shareService.GetUsername(), _shareService.GetValue());
+            LogContext.PushProperty("Username", _shareService.GetUsername());
+            LogContext.PushProperty("SessionIdentifier", _shareService.GetValue());
+            _logger.LogCritical($"GetProducts request at {DateTime.Now}");
 
             BaseResponse<List<ProductDTO>> response = new()
             {

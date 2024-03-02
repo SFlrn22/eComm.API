@@ -19,6 +19,7 @@ namespace eComm.API.TokenHandlerMiddleware
             if (header is not null && header.Split(" ")[0] == "Bearer")
             {
                 string token = header.Split(" ")[1];
+                // TODO: Vezi daca merge sa pui logContext push din middleware
                 if (token is not null)
                 {
                     var tokenHandler = new JwtSecurityTokenHandler();
