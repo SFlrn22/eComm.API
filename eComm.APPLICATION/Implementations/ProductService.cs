@@ -48,13 +48,13 @@ namespace eComm.APPLICATION.Implementations
             return response;
         }
 
-        public async Task<BaseResponse<List<ProductDTO>>> GetProducts(int pageNumber, int itemsPerPage, string? sortingColumn, string? sortingType)
+        public async Task<BaseResponse<ProductPaginationResultDTO>> GetProducts(int pageNumber, int itemsPerPage, string? sortingColumn, string? sortingType)
         {
-            LogContext.PushProperty("Username", _shareService.GetUsername());
-            LogContext.PushProperty("SessionIdentifier", _shareService.GetValue());
+            //LogContext.PushProperty("Username", _shareService.GetUsername());
+            //LogContext.PushProperty("SessionIdentifier", _shareService.GetValue());
             _logger.LogCritical($"GetProducts request at {DateTime.Now}");
 
-            BaseResponse<List<ProductDTO>> response = new()
+            BaseResponse<ProductPaginationResultDTO> response = new()
             {
                 IsSuccess = true,
                 Message = "Success"
@@ -62,8 +62,8 @@ namespace eComm.APPLICATION.Implementations
 
             try
             {
-                List<ProductDTO> products = await _productRepository.GetProducts(pageNumber, itemsPerPage, sortingColumn, sortingType);
-                response.Data = products;
+                ProductPaginationResultDTO paginationResult = await _productRepository.GetProducts(pageNumber, itemsPerPage, sortingColumn, sortingType);
+                response.Data = paginationResult;
             }
             catch (Exception ex)
             {

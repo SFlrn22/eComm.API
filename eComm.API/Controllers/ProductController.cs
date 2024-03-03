@@ -25,7 +25,7 @@ namespace eComm.API.Controllers
             if (request == null)
                 return BadRequest();
 
-            BaseResponse<List<ProductDTO>> response = await _productService.GetProducts(request.PageNumber, request.ItemsPerPage, request.SortingColumn, request.SortingType);
+            BaseResponse<ProductPaginationResultDTO> response = await _productService.GetProducts(request.PageNumber, request.ItemsPerPage, request.SortingColumn, request.SortingType);
 
             if (!response.IsSuccess)
             {

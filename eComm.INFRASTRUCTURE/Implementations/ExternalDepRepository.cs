@@ -11,12 +11,12 @@ namespace eComm.INFRASTRUCTURE.Implementations
             _httpClient = new HttpClient() { BaseAddress = new Uri("http://127.0.0.1:8000") };
         }
 
-        public async Task<List<string>> GetRecommendedItemsForId(string id)
+        public async Task<List<string>> GetRecommendedItemsForId(string id, string type)
         {
-            HttpResponseMessage response = await _httpClient.GetAsync($"/GetRecommendations/?id={id}");
+            HttpResponseMessage response = await _httpClient.GetAsync($"/GetRecommendations/?id={id}&type={type}");
             response.EnsureSuccessStatusCode();
             string content = await response.Content.ReadAsStringAsync();
-            List<string> result = JsonConvert.DeserializeObject<List<string>>(content);
+            List<string> result = JsonConvert.DeserializeObject<List<string>>(content)!;
             return result;
         }
 
@@ -25,7 +25,7 @@ namespace eComm.INFRASTRUCTURE.Implementations
             HttpResponseMessage response = await _httpClient.GetAsync("/GetTopTen");
             response.EnsureSuccessStatusCode();
             string content = await response.Content.ReadAsStringAsync();
-            List<string> result = JsonConvert.DeserializeObject<List<string>>(content);
+            List<string> result = JsonConvert.DeserializeObject<List<string>>(content)!;
             return result;
         }
     }

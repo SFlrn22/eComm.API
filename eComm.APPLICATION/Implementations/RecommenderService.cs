@@ -16,12 +16,12 @@ namespace eComm.APPLICATION.Implementations
             _shareService = shareService;
         }
 
-        public async Task<List<string>> GetRecommendedItemsForId(string id)
+        public async Task<List<string>> GetRecommendedItems(string id, string type)
         {
             _logger.LogInformation($"GetTopTen request la data {DateTime.Now}", _shareService.GetUsername(), _shareService.GetValue());
             try
             {
-                List<string> topTen = await _externalRepository.GetRecommendedItemsForId(id);
+                List<string> topTen = await _externalRepository.GetRecommendedItemsForId(id, type);
                 return topTen;
             }
             catch (Exception ex)

@@ -69,7 +69,6 @@ namespace eComm.APPLICATION.Implementations
         public async Task<BaseResponse<string>> Register(UserCreateRequest request)
         {
             int resp = 0;
-            string identifier = Guid.NewGuid().ToString();
 
             _logger.LogCritical($"Register request at {DateTime.Now}");
 
@@ -110,7 +109,7 @@ namespace eComm.APPLICATION.Implementations
 
             try
             {
-                resp = await _userRepository.CreateUser(request, identifier);
+                resp = await _userRepository.CreateUser(request);
             }
             catch (Exception ex)
             {

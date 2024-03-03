@@ -1,5 +1,7 @@
 ﻿using eComm.APPLICATION.Contracts;
+using Serilog.Context;
 using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 
 namespace eComm.API.TokenHandlerMiddleware
 {
@@ -19,15 +21,16 @@ namespace eComm.API.TokenHandlerMiddleware
             if (header is not null && header.Split(" ")[0] == "Bearer")
             {
                 string token = header.Split(" ")[1];
-                // TODO: Vezi daca merge sa pui logContext push din middleware
                 if (token is not null)
                 {
                     var tokenHandler = new JwtSecurityTokenHandler();
                     var securityToken = (JwtSecurityToken)tokenHandler.ReadToken(token);
                     string identifier = securityToken.Claims.FirstOrDefault(c => c.Type == "Identifier")!.Value!;
-                    string username = securityToken.Claims.FirstOrDefault(c => c.Type == "NameIdentifier")!.Value!;
-                    _shareService.SetValue(identifier);
-                    _shareService.SetUsername(username);
+                    string username = securityToken.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)!.Value!;
+                    //_shareService.SetValue(identifier);
+                    //_shareService.SetUsername(username);
+                    LogContext.PushProperty("Username", _shareService.GetUsername());
+                    LogContext.PushProperty("SessionIdentifier", _shareService.GetValue());
                 }
             }
             await _next(context);

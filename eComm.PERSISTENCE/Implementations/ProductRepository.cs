@@ -30,8 +30,10 @@ namespace eComm.PERSISTENCE.Implementations
             }
         }
 
-        public async Task<List<ProductDTO>> GetProducts(int pageNumber, int itemsPerPage, string? sortingColumn, string? sortingType)
+        public async Task<ProductPaginationResultDTO> GetProducts(int pageNumber, int itemsPerPage, string? sortingColumn, string? sortingType)
         {
+
+
             using (var connection = _connectionFactory.CreateConnection())
             {
                 var parameters = new DynamicParameters();
@@ -40,10 +42,20 @@ namespace eComm.PERSISTENCE.Implementations
                 parameters.Add("itemsPerPage", itemsPerPage, dbType: DbType.Int32);
                 parameters.Add("sortingColumn", sortingColumn, dbType: DbType.String);
                 parameters.Add("sortType", sortingType, dbType: DbType.String);
+                parameters.Add("productsNumber", dbType: DbType.Int32, direction: ParameterDirection.Output);
 
-                IEnumerable<ProductDTO> productList = await connection.QueryAsync<ProductDTO>(GET_PRODUCTS, parameters, commandType: CommandType.StoredProcedure);
+                var queryResult = await connection.QueryMultipleAsync(GET_PRODUCTS, parameters, commandType: CommandType.StoredProcedure);
 
-                return productList.ToList();
+                var productList = queryResult.Read<Product>().ToList();
+                var totalCount = parameters.Get<int>("productsNumber");
+
+                ProductPaginationResultDTO result = new ProductPaginationResultDTO()
+                {
+                    ProductList = productList,
+                    ProductCount = totalCount
+                };
+
+                return result;
             }
         }
     }

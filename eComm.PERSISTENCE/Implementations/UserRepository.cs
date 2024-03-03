@@ -16,15 +16,17 @@ namespace eComm.PERSISTENCE.Implementations
             _connectionFactory = connectionFactory;
         }
 
-        public async Task<int> CreateUser(UserCreateRequest request, string identifier)
+        public async Task<int> CreateUser(UserCreateRequest request)
         {
             using (var connection = _connectionFactory.CreateConnection())
             {
                 var parameters = new DynamicParameters();
+                parameters.Add("firstname", request.FirstName, dbType: DbType.String);
+                parameters.Add("lastname", request.LastName, dbType: DbType.String);
                 parameters.Add("username", request.UserName, dbType: DbType.String);
                 parameters.Add("password", request.Password, dbType: DbType.String);
                 parameters.Add("email", request.Email, dbType: DbType.String);
-                parameters.Add("identifier", identifier, dbType: DbType.String);
+                parameters.Add("country", request.Country, dbType: DbType.String);
                 return await connection.ExecuteAsync(CREATE_USER, parameters, commandType: CommandType.StoredProcedure);
             }
         }

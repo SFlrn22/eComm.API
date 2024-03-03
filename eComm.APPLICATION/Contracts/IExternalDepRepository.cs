@@ -3,6 +3,6 @@
     public interface IExternalDepRepository
     {
         Task<List<string>> GetTopTen();
-        Task<List<string>> GetRecommendedItemsForId(string Id);
+        Task<List<string>> GetRecommendedItemsForId(string id, string type);
     }
 }

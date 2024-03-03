@@ -6,6 +6,6 @@ namespace eComm.PERSISTENCE.Contracts
     public interface IUserRepository
     {
         Task<User> GetUser(string username);
-        Task<int> CreateUser(UserCreateRequest request, string identifier);
+        Task<int> CreateUser(UserCreateRequest request);
     }
 }
