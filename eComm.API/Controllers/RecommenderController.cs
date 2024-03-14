@@ -1,4 +1,5 @@
 ﻿using eComm.APPLICATION.Contracts;
+using eComm.DOMAIN.DTO;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,14 +11,17 @@ namespace eComm.API.Controllers
     public class RecommenderController : ControllerBase
     {
         private readonly IRecommenderService _recommenderService;
+
         public RecommenderController(IRecommenderService recommenderService)
         {
             _recommenderService = recommenderService;
         }
-        [HttpGet]
+
+        [AllowAnonymous]
+        [HttpGet("GetTopTen")]
         public async Task<IActionResult> GetTopTen()
         {
-            List<string> result = await _recommenderService.GetTopTen();
+            List<TopProductsDTO> result = await _recommenderService.GetTopTen();
             return Ok(result);
         }
 

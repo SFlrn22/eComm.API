@@ -7,5 +7,6 @@ namespace eComm.PERSISTENCE.Contracts
     {
         Task<ProductPaginationResultDTO> GetProducts(int pageNumber, int itemsPerPage, string? sortingColumn, string? sortingType);
         Task<Product> GetProduct(int id);
+        Task<List<TopProductsDTO>> GetProductsByIsbnList(List<string> isbnList);
     }
 }

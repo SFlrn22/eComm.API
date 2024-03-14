@@ -1,5 +1,7 @@
 ﻿using eComm.APPLICATION.Contracts;
+using eComm.DOMAIN.DTO;
 using eComm.INFRASTRUCTURE.Contracts;
+using eComm.PERSISTENCE.Contracts;
 using Microsoft.Extensions.Logging;
 
 namespace eComm.APPLICATION.Implementations
@@ -8,17 +10,17 @@ namespace eComm.APPLICATION.Implementations
     {
         private readonly IExternalDepRepository _externalRepository;
         private readonly ILogger<LoginService> _logger;
-        private readonly IShareService _shareService;
-        public RecommenderService(IExternalDepRepository externalRepository, ILogger<LoginService> logger, IShareService shareService)
+        private readonly IProductRepository _productRepository;
+        public RecommenderService(IExternalDepRepository externalRepository, ILogger<LoginService> logger, IProductRepository productRepository)
         {
             _externalRepository = externalRepository;
             _logger = logger;
-            _shareService = shareService;
+            _productRepository = productRepository;
         }
 
         public async Task<List<string>> GetRecommendedItems(string id, string type)
         {
-            _logger.LogInformation($"GetTopTen request la data {DateTime.Now}", _shareService.GetUsername(), _shareService.GetValue());
+            _logger.LogInformation($"GetTopTen request la data {DateTime.Now}");
             try
             {
                 List<string> topTen = await _externalRepository.GetRecommendedItemsForId(id, type);
@@ -26,22 +28,23 @@ namespace eComm.APPLICATION.Implementations
             }
             catch (Exception ex)
             {
-                _logger.LogInformation($"Eroare GetTopTen request la data {DateTime.Now}", ex.Message.ToString(), _shareService.GetUsername(), _shareService.GetValue());
+                _logger.LogInformation($"Eroare GetTopTen request la data {DateTime.Now}", ex.Message.ToString());
                 throw;
             }
         }
 
-        public async Task<List<string>> GetTopTen()
+        public async Task<List<TopProductsDTO>> GetTopTen()
         {
-            _logger.LogInformation($"GetTopTen request la data {DateTime.Now}", _shareService.GetUsername(), _shareService.GetValue());
+            _logger.LogInformation($"GetTopTen request la data {DateTime.Now}");
             try
             {
-                List<string> topTen = await _externalRepository.GetTopTen();
-                return topTen;
+                List<string> isbnList = await _externalRepository.GetTopTen();
+                List<TopProductsDTO> products = await _productRepository.GetProductsByIsbnList(isbnList);
+                return products;
             }
             catch (Exception ex)
             {
-                _logger.LogInformation($"Eroare GetTopTen request la data {DateTime.Now}", ex.Message.ToString(), _shareService.GetUsername(), _shareService.GetValue());
+                _logger.LogInformation($"Eroare GetTopTen request la data {DateTime.Now}", ex.Message.ToString());
                 throw;
             }
         }

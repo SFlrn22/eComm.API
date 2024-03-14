@@ -25,8 +25,8 @@ namespace eComm.INFRASTRUCTURE.Implementations
             HttpResponseMessage response = await _httpClient.GetAsync("/GetTopTen");
             response.EnsureSuccessStatusCode();
             string content = await response.Content.ReadAsStringAsync();
-            List<string> result = JsonConvert.DeserializeObject<List<string>>(content)!;
-            return result;
+            List<string> isbnList = JsonConvert.DeserializeObject<List<string>>(content)!;
+            return isbnList;
         }
     }
 }

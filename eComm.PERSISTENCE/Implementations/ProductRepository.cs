@@ -1,6 +1,7 @@
 ﻿using Dapper;
 using eComm.DOMAIN.DTO;
 using eComm.DOMAIN.Models;
+using eComm.DOMAIN.Utilities;
 using eComm.PERSISTENCE.Contracts;
 using System.Data;
 
@@ -11,6 +12,8 @@ namespace eComm.PERSISTENCE.Implementations
         private readonly IDatabaseConnectionFactory _connectionFactory;
         private readonly string GET_PRODUCTS = "usp_GetProducts";
         private readonly string GET_PRODUCT = "usp_GetProduct";
+        private readonly string GET_PRODUCTS_BY_ISBN_LIST = "usp_GetProductsFromIsbnList";
+
         public ProductRepository(IDatabaseConnectionFactory connectionFactory)
         {
             _connectionFactory = connectionFactory;
@@ -32,8 +35,6 @@ namespace eComm.PERSISTENCE.Implementations
 
         public async Task<ProductPaginationResultDTO> GetProducts(int pageNumber, int itemsPerPage, string? sortingColumn, string? sortingType)
         {
-
-
             using (var connection = _connectionFactory.CreateConnection())
             {
                 var parameters = new DynamicParameters();
@@ -56,6 +57,20 @@ namespace eComm.PERSISTENCE.Implementations
                 };
 
                 return result;
+            }
+        }
+
+        public async Task<List<TopProductsDTO>> GetProductsByIsbnList(List<string> isbnList)
+        {
+            using (var connection = _connectionFactory.CreateConnection())
+            {
+                var parameters = new DynamicParameters();
+
+                parameters.Add("list", isbnList.ToDataTable(), dbType: DbType.Object);
+
+                IEnumerable<TopProductsDTO> products = await connection.QueryAsync<TopProductsDTO>(GET_PRODUCTS_BY_ISBN_LIST, parameters, commandType: CommandType.StoredProcedure);
+
+                return products.ToList();
             }
         }
     }
