@@ -25,7 +25,7 @@ namespace eComm.API.Controllers
             if (request == null)
                 return BadRequest();
 
-            BaseResponse<ProductPaginationResultDTO> response = await _productService.GetProducts(request.PageNumber, request.ItemsPerPage, request.SortingColumn, request.SortingType);
+            BaseResponse<ProductPaginationResultDTO> response = await _productService.GetProducts(request.PageNumber, request.ItemsPerPage, request.SortingColumn, request.SortingType, request.FilterColumn, request.FilterValue);
 
             if (!response.IsSuccess)
             {
@@ -34,6 +34,7 @@ namespace eComm.API.Controllers
 
             return Ok(response);
         }
+
         [Authorize]
         [HttpGet("/api/GetProduct/{id}")]
         public async Task<IActionResult> GetProducts([FromRoute] int id)
@@ -50,6 +51,7 @@ namespace eComm.API.Controllers
 
             return Ok(response);
         }
+
         [Authorize]
         [HttpPost("/api/GetProductByVoice")]
         public async Task<IActionResult> GetProductByVoice(IFormFile file)

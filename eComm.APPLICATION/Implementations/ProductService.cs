@@ -4,7 +4,6 @@ using eComm.DOMAIN.Models;
 using eComm.DOMAIN.Responses;
 using eComm.PERSISTENCE.Contracts;
 using Microsoft.Extensions.Logging;
-using Serilog.Context;
 
 namespace eComm.APPLICATION.Implementations
 {
@@ -22,8 +21,8 @@ namespace eComm.APPLICATION.Implementations
 
         public async Task<BaseResponse<Product>> GetProduct(int id)
         {
-            LogContext.PushProperty("Username", _shareService.GetUsername());
-            LogContext.PushProperty("SessionIdentifier", _shareService.GetValue());
+            //LogContext.PushProperty("Username", _shareService.GetUsername());
+            //LogContext.PushProperty("SessionIdentifier", _shareService.GetValue());
             _logger.LogCritical($"GetProduct request at {DateTime.Now}");
 
             BaseResponse<Product> response = new()
@@ -48,7 +47,33 @@ namespace eComm.APPLICATION.Implementations
             return response;
         }
 
-        public async Task<BaseResponse<ProductPaginationResultDTO>> GetProducts(int pageNumber, int itemsPerPage, string? sortingColumn, string? sortingType)
+        public async Task<BaseResponse<List<Product>>> GetProductsByName(string productName)
+        {
+            _logger.LogCritical($"GetProductByName request at {DateTime.Now}");
+
+            BaseResponse<List<Product>> response = new()
+            {
+                IsSuccess = true,
+                Message = "Success"
+            };
+
+            try
+            {
+                List<Product> products = await _productRepository.GetProductsByName(productName);
+                response.Data = products;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Eroare GetProductsByName la {DateTime.Now}", ex.Message.ToString());
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+                return response;
+            }
+
+            return response;
+        }
+
+        public async Task<BaseResponse<ProductPaginationResultDTO>> GetProducts(int pageNumber, int itemsPerPage, string? sortingColumn, string? sortingType, string? filterColumn, string? filterValue)
         {
             //LogContext.PushProperty("Username", _shareService.GetUsername());
             //LogContext.PushProperty("SessionIdentifier", _shareService.GetValue());
@@ -62,7 +87,7 @@ namespace eComm.APPLICATION.Implementations
 
             try
             {
-                ProductPaginationResultDTO paginationResult = await _productRepository.GetProducts(pageNumber, itemsPerPage, sortingColumn, sortingType);
+                ProductPaginationResultDTO paginationResult = await _productRepository.GetProducts(pageNumber, itemsPerPage, sortingColumn, sortingType, filterColumn, filterValue);
                 response.Data = paginationResult;
             }
             catch (Exception ex)

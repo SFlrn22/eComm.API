@@ -10,9 +10,11 @@ namespace eComm.PERSISTENCE.Implementations
     public class ProductRepository : IProductRepository
     {
         private readonly IDatabaseConnectionFactory _connectionFactory;
+
         private readonly string GET_PRODUCTS = "usp_GetProducts";
         private readonly string GET_PRODUCT = "usp_GetProduct";
         private readonly string GET_PRODUCTS_BY_ISBN_LIST = "usp_GetProductsFromIsbnList";
+        private readonly string GET_PRODUCTS_BY_NAME = "usp_GetProductsByName";
 
         public ProductRepository(IDatabaseConnectionFactory connectionFactory)
         {
@@ -33,7 +35,21 @@ namespace eComm.PERSISTENCE.Implementations
             }
         }
 
-        public async Task<ProductPaginationResultDTO> GetProducts(int pageNumber, int itemsPerPage, string? sortingColumn, string? sortingType)
+        public async Task<List<Product>> GetProductsByName(string productName)
+        {
+            using (var connection = _connectionFactory.CreateConnection())
+            {
+                var parameters = new DynamicParameters();
+
+                parameters.Add("title", productName, dbType: DbType.String);
+
+                IEnumerable<Product> products = await connection.QueryAsync<Product>(GET_PRODUCTS_BY_NAME, parameters, commandType: CommandType.StoredProcedure);
+
+                return products.ToList();
+            }
+        }
+
+        public async Task<ProductPaginationResultDTO> GetProducts(int pageNumber, int itemsPerPage, string? sortingColumn, string? sortingType, string? filterColumn, string? filterValue)
         {
             using (var connection = _connectionFactory.CreateConnection())
             {
@@ -43,6 +59,8 @@ namespace eComm.PERSISTENCE.Implementations
                 parameters.Add("itemsPerPage", itemsPerPage, dbType: DbType.Int32);
                 parameters.Add("sortingColumn", sortingColumn, dbType: DbType.String);
                 parameters.Add("sortType", sortingType, dbType: DbType.String);
+                parameters.Add("filterColumn", filterColumn, dbType: DbType.String);
+                parameters.Add("filterValue", filterValue, dbType: DbType.String);
                 parameters.Add("productsNumber", dbType: DbType.Int32, direction: ParameterDirection.Output);
 
                 var queryResult = await connection.QueryMultipleAsync(GET_PRODUCTS, parameters, commandType: CommandType.StoredProcedure);
