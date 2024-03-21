@@ -18,13 +18,14 @@ namespace eComm.APPLICATION.Implementations
             _productRepository = productRepository;
         }
 
-        public async Task<List<string>> GetRecommendedItems(string id, string type)
+        public async Task<List<TopProductsDTO>> GetRecommendedItems(string id, string type)
         {
             _logger.LogInformation($"GetTopTen request la data {DateTime.Now}");
             try
             {
                 List<string> topTen = await _externalRepository.GetRecommendedItemsForId(id, type);
-                return topTen;
+                List<TopProductsDTO> products = await _productRepository.GetProductsByIsbnList(topTen);
+                return products;
             }
             catch (Exception ex)
             {
