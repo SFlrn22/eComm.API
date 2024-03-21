@@ -1,6 +1,7 @@
 ﻿using Dapper;
 using eComm.DOMAIN.DTO;
 using eComm.DOMAIN.Models;
+using eComm.DOMAIN.Requests;
 using eComm.DOMAIN.Utilities;
 using eComm.PERSISTENCE.Contracts;
 using System.Data;
@@ -15,6 +16,7 @@ namespace eComm.PERSISTENCE.Implementations
         private readonly string GET_PRODUCT = "usp_GetProduct";
         private readonly string GET_PRODUCTS_BY_ISBN_LIST = "usp_GetProductsFromIsbnList";
         private readonly string GET_PRODUCTS_BY_NAME = "usp_GetProductsByName";
+        private readonly string ADD_OR_REMOVE_FAVORITE = "usp_AddOrRemoveFavorite";
 
         public ProductRepository(IDatabaseConnectionFactory connectionFactory)
         {
@@ -89,6 +91,19 @@ namespace eComm.PERSISTENCE.Implementations
                 IEnumerable<TopProductsDTO> products = await connection.QueryAsync<TopProductsDTO>(GET_PRODUCTS_BY_ISBN_LIST, parameters, commandType: CommandType.StoredProcedure);
 
                 return products.ToList();
+            }
+        }
+
+        public async Task AddOrRemoveFavorites(AddToFavoriteRequest request)
+        {
+            using (var connection = _connectionFactory.CreateConnection())
+            {
+                var parameters = new DynamicParameters();
+
+                parameters.Add("id", request.UserID, dbType: DbType.Int32);
+                parameters.Add("isbn", request.ISBN, dbType: DbType.String);
+
+                await connection.ExecuteAsync(ADD_OR_REMOVE_FAVORITE, parameters, commandType: CommandType.StoredProcedure);
             }
         }
     }

@@ -1,5 +1,6 @@
 ﻿using eComm.DOMAIN.DTO;
 using eComm.DOMAIN.Models;
+using eComm.DOMAIN.Requests;
 
 namespace eComm.PERSISTENCE.Contracts
 {
@@ -9,5 +10,6 @@ namespace eComm.PERSISTENCE.Contracts
         Task<Product> GetProduct(int id);
         Task<List<TopProductsDTO>> GetProductsByIsbnList(List<string> isbnList);
         Task<List<Product>> GetProductsByName(string productName);
+        Task AddOrRemoveFavorites(AddToFavoriteRequest request);
     }
 }

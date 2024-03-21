@@ -1,6 +1,7 @@
 ﻿using eComm.APPLICATION.Contracts;
 using eComm.DOMAIN.DTO;
 using eComm.DOMAIN.Models;
+using eComm.DOMAIN.Requests;
 using eComm.DOMAIN.Responses;
 using eComm.PERSISTENCE.Contracts;
 using Microsoft.Extensions.Logging;
@@ -89,6 +90,31 @@ namespace eComm.APPLICATION.Implementations
             {
                 ProductPaginationResultDTO paginationResult = await _productRepository.GetProducts(pageNumber, itemsPerPage, sortingColumn, sortingType, filterColumn, filterValue);
                 response.Data = paginationResult;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Eroare GetProduct la {DateTime.Now}", ex.Message.ToString(), _shareService.GetUsername(), _shareService.GetValue());
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+                return response;
+            }
+
+            return response;
+        }
+
+        public async Task<BaseResponse<string>> AddOrRemoveFavorites(AddToFavoriteRequest request)
+        {
+            _logger.LogCritical($"AddOrRemoveFavorites request at {DateTime.Now}");
+
+            BaseResponse<string> response = new()
+            {
+                IsSuccess = true,
+                Message = "Success"
+            };
+
+            try
+            {
+                await _productRepository.AddOrRemoveFavorites(request);
             }
             catch (Exception ex)
             {
