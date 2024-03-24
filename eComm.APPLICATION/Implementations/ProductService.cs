@@ -93,7 +93,7 @@ namespace eComm.APPLICATION.Implementations
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Eroare GetProduct la {DateTime.Now}", ex.Message.ToString(), _shareService.GetUsername(), _shareService.GetValue());
+                _logger.LogError($"Eroare GetProducts la {DateTime.Now}", ex.Message.ToString(), _shareService.GetUsername(), _shareService.GetValue());
                 response.IsSuccess = false;
                 response.Message = ex.Message;
                 return response;
@@ -118,7 +118,78 @@ namespace eComm.APPLICATION.Implementations
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Eroare GetProduct la {DateTime.Now}", ex.Message.ToString(), _shareService.GetUsername(), _shareService.GetValue());
+                _logger.LogError($"Eroare AddOrRemoveFavorites la {DateTime.Now}", ex.Message.ToString(), _shareService.GetUsername(), _shareService.GetValue());
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+                return response;
+            }
+
+            return response;
+        }
+
+        public async Task<BaseResponse<List<string>>> GetFavorites()
+        {
+            _logger.LogCritical($"GetFavorites request at {DateTime.Now}");
+
+            BaseResponse<List<string>> response = new()
+            {
+                IsSuccess = true,
+                Message = "Success"
+            };
+
+            string username = _shareService.GetUsername();
+
+            if (String.IsNullOrEmpty(username))
+            {
+                response.IsSuccess = false;
+                response.Message = "Token does no contain username information";
+                return response;
+            }
+
+            try
+            {
+                var isbnList = await _productRepository.GetFavoriteProducts(username);
+                response.Data = isbnList;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Eroare GetFavorites la {DateTime.Now}", ex.Message.ToString(), _shareService.GetUsername(), _shareService.GetValue());
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+                return response;
+            }
+
+            return response;
+        }
+
+        public async Task<BaseResponse<List<ProductDTO>>> GetFavoriteProducts()
+        {
+            _logger.LogCritical($"GetFavoriteProduct request at {DateTime.Now}");
+
+            BaseResponse<List<ProductDTO>> response = new()
+            {
+                IsSuccess = true,
+                Message = "Success"
+            };
+
+            string username = _shareService.GetUsername();
+
+            if (String.IsNullOrEmpty(username))
+            {
+                response.IsSuccess = false;
+                response.Message = "Token does no contain username information";
+                return response;
+            }
+
+            try
+            {
+                var isbnList = await _productRepository.GetFavoriteProducts(username);
+                var productInfo = await _productRepository.GetProductsByIsbnList(isbnList);
+                response.Data = productInfo;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Eroare GetFavoriteProduct la {DateTime.Now}", ex.Message.ToString(), _shareService.GetUsername(), _shareService.GetValue());
                 response.IsSuccess = false;
                 response.Message = ex.Message;
                 return response;

@@ -18,13 +18,13 @@ namespace eComm.APPLICATION.Implementations
             _productRepository = productRepository;
         }
 
-        public async Task<List<TopProductsDTO>> GetRecommendedItems(string id, string type)
+        public async Task<List<ProductDTO>> GetRecommendedItems(string id, string type)
         {
             _logger.LogInformation($"GetTopTen request la data {DateTime.Now}");
             try
             {
                 List<string> topTen = await _externalRepository.GetRecommendedItemsForId(id, type);
-                List<TopProductsDTO> products = await _productRepository.GetProductsByIsbnList(topTen);
+                List<ProductDTO> products = await _productRepository.GetProductsByIsbnList(topTen);
                 return products;
             }
             catch (Exception ex)
@@ -34,13 +34,13 @@ namespace eComm.APPLICATION.Implementations
             }
         }
 
-        public async Task<List<TopProductsDTO>> GetTopTen()
+        public async Task<List<ProductDTO>> GetTopTen()
         {
             _logger.LogInformation($"GetTopTen request la data {DateTime.Now}");
             try
             {
                 List<string> isbnList = await _externalRepository.GetTopTen();
-                List<TopProductsDTO> products = await _productRepository.GetProductsByIsbnList(isbnList);
+                List<ProductDTO> products = await _productRepository.GetProductsByIsbnList(isbnList);
                 return products;
             }
             catch (Exception ex)

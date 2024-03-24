@@ -53,24 +53,6 @@ namespace eComm.API.Controllers
         }
 
         [Authorize]
-        [HttpPost("/api/Favorite")]
-        public async Task<IActionResult> AddOrRemoveFavorites([FromBody] AddToFavoriteRequest request)
-        {
-            if (request == null)
-                return BadRequest();
-
-            BaseResponse<string> response = await _productService.AddOrRemoveFavorites(request);
-
-            if (!response.IsSuccess)
-            {
-                return BadRequest(response);
-            }
-
-            return Ok();
-        }
-
-
-        [Authorize]
         [HttpPost("/api/GetProductByVoice")]
         public async Task<IActionResult> GetProductByVoice(IFormFile file)
         {

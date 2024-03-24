@@ -17,7 +17,7 @@ namespace eComm.PERSISTENCE.Implementations
         private readonly string GET_PRODUCTS_BY_ISBN_LIST = "usp_GetProductsFromIsbnList";
         private readonly string GET_PRODUCTS_BY_NAME = "usp_GetProductsByName";
         private readonly string ADD_OR_REMOVE_FAVORITE = "usp_AddOrRemoveFavorite";
-
+        private readonly string GET_FAVORITES_BY_USER = "usp_GetFavoritesByUser";
         public ProductRepository(IDatabaseConnectionFactory connectionFactory)
         {
             _connectionFactory = connectionFactory;
@@ -80,7 +80,7 @@ namespace eComm.PERSISTENCE.Implementations
             }
         }
 
-        public async Task<List<TopProductsDTO>> GetProductsByIsbnList(List<string> isbnList)
+        public async Task<List<ProductDTO>> GetProductsByIsbnList(List<string> isbnList)
         {
             using (var connection = _connectionFactory.CreateConnection())
             {
@@ -88,7 +88,7 @@ namespace eComm.PERSISTENCE.Implementations
 
                 parameters.Add("list", isbnList.ToDataTable(), dbType: DbType.Object);
 
-                IEnumerable<TopProductsDTO> products = await connection.QueryAsync<TopProductsDTO>(GET_PRODUCTS_BY_ISBN_LIST, parameters, commandType: CommandType.StoredProcedure);
+                IEnumerable<ProductDTO> products = await connection.QueryAsync<ProductDTO>(GET_PRODUCTS_BY_ISBN_LIST, parameters, commandType: CommandType.StoredProcedure);
 
                 return products.ToList();
             }
@@ -104,6 +104,20 @@ namespace eComm.PERSISTENCE.Implementations
                 parameters.Add("isbn", request.ISBN, dbType: DbType.String);
 
                 await connection.ExecuteAsync(ADD_OR_REMOVE_FAVORITE, parameters, commandType: CommandType.StoredProcedure);
+            }
+        }
+
+        public async Task<List<string>> GetFavoriteProducts(string username)
+        {
+            using (var connection = _connectionFactory.CreateConnection())
+            {
+                var parameters = new DynamicParameters();
+
+                parameters.Add("username", username, dbType: DbType.String);
+
+                var result = await connection.QueryAsync<string>(GET_FAVORITES_BY_USER, parameters, commandType: CommandType.StoredProcedure);
+
+                return result.ToList();
             }
         }
     }

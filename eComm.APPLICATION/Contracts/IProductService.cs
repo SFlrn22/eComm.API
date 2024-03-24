@@ -11,5 +11,7 @@ namespace eComm.APPLICATION.Contracts
         Task<BaseResponse<Product>> GetProduct(int id);
         Task<BaseResponse<List<Product>>> GetProductsByName(string productName);
         Task<BaseResponse<string>> AddOrRemoveFavorites(AddToFavoriteRequest request);
+        Task<BaseResponse<List<string>>> GetFavorites();
+        Task<BaseResponse<List<ProductDTO>>> GetFavoriteProducts();
     }
 }
