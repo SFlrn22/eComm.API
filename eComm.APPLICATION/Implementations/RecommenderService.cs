@@ -23,8 +23,8 @@ namespace eComm.APPLICATION.Implementations
             _logger.LogInformation($"GetTopTen request la data {DateTime.Now}");
             try
             {
-                List<string> topTen = await _externalRepository.GetRecommendedItemsForId(id, type);
-                List<ProductDTO> products = await _productRepository.GetProductsByIsbnList(topTen);
+                List<string> titleList = await _externalRepository.GetRecommendedItemsForId(id, type);
+                List<ProductDTO> products = await _productRepository.GetProductsByTitleList(titleList);
                 return products;
             }
             catch (Exception ex)

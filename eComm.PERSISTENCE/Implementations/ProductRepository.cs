@@ -15,6 +15,7 @@ namespace eComm.PERSISTENCE.Implementations
         private readonly string GET_PRODUCTS = "usp_GetProducts";
         private readonly string GET_PRODUCT = "usp_GetProduct";
         private readonly string GET_PRODUCTS_BY_ISBN_LIST = "usp_GetProductsFromIsbnList";
+        private readonly string GET_PRODUCTS_BY_TITLE_LIST = "usp_GetProductsFromTitleList";
         private readonly string GET_PRODUCTS_BY_NAME = "usp_GetProductsByName";
         private readonly string ADD_OR_REMOVE_FAVORITE = "usp_AddOrRemoveFavorites";
         private readonly string GET_FAVORITES_BY_USER = "usp_GetFavoritesByUser";
@@ -118,6 +119,20 @@ namespace eComm.PERSISTENCE.Implementations
                 var result = await connection.QueryAsync<string>(GET_FAVORITES_BY_USER, parameters, commandType: CommandType.StoredProcedure);
 
                 return result.ToList();
+            }
+        }
+
+        public async Task<List<ProductDTO>> GetProductsByTitleList(List<string> titleList)
+        {
+            using (var connection = _connectionFactory.CreateConnection())
+            {
+                var parameters = new DynamicParameters();
+
+                parameters.Add("list", titleList.ToDataTable(), dbType: DbType.Object);
+
+                IEnumerable<ProductDTO> products = await connection.QueryAsync<ProductDTO>(GET_PRODUCTS_BY_TITLE_LIST, parameters, commandType: CommandType.StoredProcedure);
+
+                return products.ToList();
             }
         }
     }
