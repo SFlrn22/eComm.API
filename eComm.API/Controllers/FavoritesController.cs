@@ -32,7 +32,7 @@ namespace eComm.API.Controllers
                 return BadRequest(response);
             }
 
-            return Ok();
+            return Ok(response);
         }
 
         [Authorize]

@@ -26,9 +26,13 @@ namespace eComm.API.TokenHandlerMiddleware
                     var tokenHandler = new JwtSecurityTokenHandler();
                     var securityToken = (JwtSecurityToken)tokenHandler.ReadToken(token);
                     string identifier = securityToken.Claims.FirstOrDefault(c => c.Type == "Identifier")!.Value!;
+                    string userId = securityToken.Claims.FirstOrDefault(c => c.Type == "UserId")!.Value!;
                     string username = securityToken.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)!.Value!;
-                    LogContext.PushProperty("Username", _shareService.GetUsername());
-                    LogContext.PushProperty("SessionIdentifier", _shareService.GetValue());
+                    _shareService.SetValue(identifier);
+                    _shareService.SetUsername(username);
+                    _shareService.SetUserId(userId);
+                    LogContext.PushProperty("Username", username);
+                    LogContext.PushProperty("SessionIdentifier", identifier);
                 }
             }
             await _next(context);

@@ -25,17 +25,17 @@ namespace eComm.API.Controllers
             return Ok(result);
         }
 
-        [HttpGet("ItemBased/{id}")]
-        public async Task<IActionResult> GetItemBasedRecommendations([FromQuery] string id)
+        [HttpGet("ItemBased")]
+        public async Task<IActionResult> GetItemBasedRecommendations([FromQuery] string isbn)
         {
-            List<ProductDTO> result = await _recommenderService.GetRecommendedItems(id, "item");
+            List<ProductDTO> result = await _recommenderService.GetRecommendedItems(isbn, "item");
             return Ok(result);
         }
 
-        [HttpGet("ContentBased/{id}")]
-        public async Task<IActionResult> GetContentBasedRecommendations([FromQuery] string id)
+        [HttpGet("ContentBased")]
+        public async Task<IActionResult> GetContentBasedRecommendations([FromQuery] string isbn)
         {
-            List<ProductDTO> result = await _recommenderService.GetRecommendedItems(id, "content");
+            List<ProductDTO> result = await _recommenderService.GetRecommendedItems(isbn, "content");
             return Ok(result);
         }
     }

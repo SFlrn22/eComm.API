@@ -13,7 +13,7 @@ namespace eComm.INFRASTRUCTURE.Implementations
 
         public async Task<List<string>> GetRecommendedItemsForId(string id, string type)
         {
-            HttpResponseMessage response = await _httpClient.GetAsync($"/GetRecommendations/?id={id}&type={type}");
+            HttpResponseMessage response = await _httpClient.GetAsync($"/GetRecommendations/?isbn={id}&type={type}");
             response.EnsureSuccessStatusCode();
             string content = await response.Content.ReadAsStringAsync();
             List<string> result = JsonConvert.DeserializeObject<List<string>>(content)!;

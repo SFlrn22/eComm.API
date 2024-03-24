@@ -28,6 +28,7 @@ namespace eComm.APPLICATION.Helpers
                 new Claim(ClaimTypes.GivenName, user.Firstname),
                 new Claim(ClaimTypes.Surname, user.Lastname),
                 new Claim(type: "Identifier", value: sessionidentifier),
+                new Claim(type: "UserId", value: user.ID.ToString())
             };
 
             var token = new JwtSecurityToken(_config["Jwt:Issuer"],

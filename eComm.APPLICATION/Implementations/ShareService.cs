@@ -6,6 +6,11 @@ namespace eComm.APPLICATION.Implementations
     {
         private string identifier;
         private string username;
+        private string userId;
+        public string GetUserId()
+        {
+            return userId;
+        }
 
         public string GetUsername()
         {
@@ -15,6 +20,11 @@ namespace eComm.APPLICATION.Implementations
         public string GetValue()
         {
             return identifier;
+        }
+
+        public void SetUserId(string value)
+        {
+            userId = value;
         }
 
         public void SetUsername(string value)

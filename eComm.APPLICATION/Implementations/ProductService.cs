@@ -112,9 +112,11 @@ namespace eComm.APPLICATION.Implementations
                 Message = "Success"
             };
 
+            int userId = int.Parse(_shareService.GetUserId());
+
             try
             {
-                await _productRepository.AddOrRemoveFavorites(request);
+                await _productRepository.AddOrRemoveFavorites(request, userId);
             }
             catch (Exception ex)
             {
