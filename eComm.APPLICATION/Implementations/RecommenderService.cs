@@ -24,7 +24,7 @@ namespace eComm.APPLICATION.Implementations
             try
             {
                 List<string> titleList = await _externalRepository.GetRecommendedItemsForId(id, type);
-                List<ProductDTO> products = await _productRepository.GetProductsByTitleList(titleList);
+                List<ProductDTO> products = await _productRepository.GetProductsByIsbnList(titleList);
                 return products;
             }
             catch (Exception ex)
