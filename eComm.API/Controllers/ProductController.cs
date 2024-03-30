@@ -37,7 +37,7 @@ namespace eComm.API.Controllers
 
         [Authorize]
         [HttpGet("/api/GetProduct/{id}")]
-        public async Task<IActionResult> GetProducts([FromRoute] int id)
+        public async Task<IActionResult> GetProduct([FromRoute] int id)
         {
             if (id == default)
                 return BadRequest();

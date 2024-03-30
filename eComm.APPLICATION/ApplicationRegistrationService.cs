@@ -8,10 +8,11 @@ namespace eComm.APPLICATION
     {
         public static IServiceCollection AddApplicationServices(this IServiceCollection services)
         {
-            services.AddScoped<ILoginService, LoginService>();
-            services.AddScoped<IRecommenderService, RecommenderService>();
-            services.AddScoped<IProductService, ProductService>();
-            services.AddSingleton<IShareService, ShareService>();
+            services.AddScoped<ILoginService, LoginService>()
+                    .AddScoped<IRecommenderService, RecommenderService>()
+                    .AddScoped<IProductService, ProductService>()
+                    .AddScoped<IScrapperService, ScrapperService>()
+                    .AddSingleton<IShareService, ShareService>();
             return services;
         }
     }
