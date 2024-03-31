@@ -3,6 +3,7 @@ using eComm.DOMAIN.DTO;
 using eComm.DOMAIN.Models;
 using eComm.DOMAIN.Requests;
 using eComm.DOMAIN.Responses;
+using eComm.INFRASTRUCTURE.Contracts;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,9 +14,11 @@ namespace eComm.API.Controllers
     public class ProductController : ControllerBase
     {
         private readonly IProductService _productService;
-        public ProductController(IProductService productService)
+        private readonly IExternalDepRepository _externalDepRepository;
+        public ProductController(IProductService productService, IExternalDepRepository externalDepRepository)
         {
             _productService = productService;
+            _externalDepRepository = externalDepRepository;
         }
 
         [AllowAnonymous]
@@ -54,9 +57,11 @@ namespace eComm.API.Controllers
 
         [Authorize]
         [HttpPost("/api/GetProductByVoice")]
-        public async Task<IActionResult> GetProductByVoice(IFormFile file)
+        public async Task<IActionResult> GetProductByVoice()
         {
-            throw new NotImplementedException();
+            var file = Request.Form.Files[0];
+            var res = await _externalDepRepository.GetProductFromVoiceRecord(file);
+            return Ok();
         }
     }
 }
