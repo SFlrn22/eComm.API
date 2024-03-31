@@ -25,7 +25,7 @@ namespace eComm.APPLICATION.Implementations
             }
             catch
             {
-                throw;
+                return new List<double>();
             }
             return prices;
         }
