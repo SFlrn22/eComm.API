@@ -13,5 +13,6 @@ namespace eComm.PERSISTENCE.Contracts
         Task<List<Product>> GetProductsByName(string productName);
         Task AddOrRemoveFavorites(AddToFavoriteRequest request, int userId);
         Task<List<string>> GetFavoriteProducts(string username);
+        Task<Product> GetProductByUrlM(string urlM);
     }
 }

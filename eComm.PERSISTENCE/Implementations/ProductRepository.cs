@@ -19,6 +19,7 @@ namespace eComm.PERSISTENCE.Implementations
         private readonly string GET_PRODUCTS_BY_NAME = "usp_GetProductsByName";
         private readonly string ADD_OR_REMOVE_FAVORITE = "usp_AddOrRemoveFavorites";
         private readonly string GET_FAVORITES_BY_USER = "usp_GetFavoritesByUser";
+        private readonly string GET_PRODUCT_BY_URLM = "usp_GetProductByUrlM";
         public ProductRepository(IDatabaseConnectionFactory connectionFactory)
         {
             _connectionFactory = connectionFactory;
@@ -133,6 +134,20 @@ namespace eComm.PERSISTENCE.Implementations
                 IEnumerable<ProductDTO> products = await connection.QueryAsync<ProductDTO>(GET_PRODUCTS_BY_TITLE_LIST, parameters, commandType: CommandType.StoredProcedure);
 
                 return products.ToList();
+            }
+        }
+
+        public async Task<Product> GetProductByUrlM(string urlM)
+        {
+            using (var connection = _connectionFactory.CreateConnection())
+            {
+                var parameters = new DynamicParameters();
+
+                parameters.Add("@url", urlM, dbType: DbType.String);
+
+                Product product = await connection.QueryFirstAsync<Product>(GET_PRODUCT_BY_URLM, parameters, commandType: CommandType.StoredProcedure);
+
+                return product;
             }
         }
     }

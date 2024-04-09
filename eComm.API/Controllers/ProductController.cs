@@ -59,9 +59,20 @@ namespace eComm.API.Controllers
         [HttpPost("/api/GetProductByVoice")]
         public async Task<IActionResult> GetProductByVoice()
         {
-            var file = Request.Form.Files[0];
-            var res = await _externalDepRepository.GetProductFromVoiceRecord(file);
-            return Ok();
+            var form = await Request.ReadFormAsync();
+            var file = form.Files.First();
+            var result = await _externalDepRepository.GetProductFromVoiceRecord(file);
+            return Ok(result);
+        }
+
+        [Authorize]
+        [HttpPost("/api/GetProductByImage")]
+        public async Task<IActionResult> GetProductByImage()
+        {
+            var form = await Request.ReadFormAsync();
+            var file = form.Files.First();
+            var result = await _externalDepRepository.GetProductFromImage(file);
+            return Ok(result);
         }
     }
 }

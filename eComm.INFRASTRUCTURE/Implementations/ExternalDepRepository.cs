@@ -1,5 +1,8 @@
 ﻿using eComm.DOMAIN.DTO;
+using eComm.DOMAIN.Models;
+using eComm.DOMAIN.Utilities;
 using eComm.INFRASTRUCTURE.Contracts;
+using eComm.PERSISTENCE.Contracts;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 
@@ -8,12 +11,32 @@ namespace eComm.INFRASTRUCTURE.Implementations
     public class ExternalDepRepository : IExternalDepRepository
     {
         private readonly HttpClient _httpClient;
-        public ExternalDepRepository()
+        private readonly IProductRepository _productRepository;
+        public ExternalDepRepository(IProductRepository productRepository)
         {
             _httpClient = new HttpClient() { BaseAddress = new Uri("http://127.0.0.1:8000") };
+            _productRepository = productRepository;
         }
 
-        public async Task<ProductDTO> GetProductFromVoiceRecord(IFormFile file)
+        public async Task<ProductDTO> GetProductFromImage(IFormFile file)
+        {
+            var fileContent = new StreamContent(file.OpenReadStream());
+
+            var contentToUpload = new MultipartFormDataContent();
+            contentToUpload.Add(fileContent, "file", file.FileName);
+
+            HttpResponseMessage response = await _httpClient.PostAsync($"/SearchByImage", contentToUpload);
+
+            response.EnsureSuccessStatusCode();
+            string content = await response.Content.ReadAsStringAsync();
+            string url = JsonConvert.DeserializeObject<string>(content)!;
+
+            Product product = await _productRepository.GetProductByUrlM(url);
+
+            return product.MapProductToDTO();
+        }
+
+        public async Task<List<ProductDTO>> GetProductFromVoiceRecord(IFormFile file)
         {
             var fileContent = new StreamContent(file.OpenReadStream());
 
@@ -22,11 +45,12 @@ namespace eComm.INFRASTRUCTURE.Implementations
 
             HttpResponseMessage response = await _httpClient.PostAsync($"/VTT", contentToUpload);
 
-
             response.EnsureSuccessStatusCode();
             string content = await response.Content.ReadAsStringAsync();
-            string isbnList = JsonConvert.DeserializeObject<string>(content)!;
-            throw new NotImplementedException();
+            string title = JsonConvert.DeserializeObject<string>(content)!;
+            List<Product> products = await _productRepository.GetProductsByName(title);
+
+            return products.MapProductsToDTO();
         }
 
         public async Task<List<string>> GetRecommendedItemsForId(string id, string type)

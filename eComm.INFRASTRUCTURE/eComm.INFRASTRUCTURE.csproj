@@ -14,6 +14,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\eComm.APPLICATION\eComm.APPLICATION.csproj" />
+    <ProjectReference Include="..\eComm.DOMAIN\eComm.DOMAIN.csproj" />
   </ItemGroup>
 
 </Project>

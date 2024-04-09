@@ -7,6 +7,7 @@ namespace eComm.INFRASTRUCTURE.Contracts
     {
         Task<List<string>> GetTopTen();
         Task<List<string>> GetRecommendedItemsForId(string id, string type);
-        Task<ProductDTO> GetProductFromVoiceRecord(IFormFile file);
+        Task<List<ProductDTO>> GetProductFromVoiceRecord(IFormFile file);
+        Task<ProductDTO> GetProductFromImage(IFormFile file);
     }
 }
