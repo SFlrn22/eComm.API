@@ -154,8 +154,6 @@ namespace eComm.PERSISTENCE.Implementations
 
         public async Task<string> InsertRating(RateProductRequest request, string userId)
         {
-            // INSERT_RATING
-
             using (var connection = _connectionFactory.CreateConnection())
             {
                 var parameters = new DynamicParameters();
@@ -164,7 +162,7 @@ namespace eComm.PERSISTENCE.Implementations
                 parameters.Add("@ISBN", request.ISBN, dbType: DbType.String);
                 parameters.Add("@Rating", request.Rating, dbType: DbType.Int32);
 
-                string? result = await connection.ExecuteScalarAsync<string>(GET_PRODUCT_BY_URLM, parameters, commandType: CommandType.StoredProcedure);
+                string? result = await connection.ExecuteScalarAsync<string>(INSERT_RATING, parameters, commandType: CommandType.StoredProcedure);
 
                 return result ?? "";
             }
