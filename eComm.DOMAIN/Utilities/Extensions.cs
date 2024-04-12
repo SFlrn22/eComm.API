@@ -35,7 +35,7 @@ namespace eComm.DOMAIN.Utilities
                     Title = product.Title,
                     Publisher = product.Publisher,
                     PublicationYear = product.PublicationYear,
-                    ImageUrlM = product.ImageUrlM
+                    ImageUrlL = product.ImageUrlL
                 };
                 productsDTO.Add(productDTO);
             }
@@ -52,7 +52,7 @@ namespace eComm.DOMAIN.Utilities
                 Author = product.Author,
                 Publisher = product.Publisher,
                 PublicationYear = product.PublicationYear,
-                ImageUrlM = product.ImageUrlM
+                ImageUrlL = product.ImageUrlL
             };
         }
     }
