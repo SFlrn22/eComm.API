@@ -161,13 +161,13 @@ namespace eComm.PERSISTENCE.Implementations
                 parameters.Add("userId", int.Parse(userId), dbType: DbType.Int32);
                 parameters.Add("isbn", request.ISBN, dbType: DbType.String);
                 parameters.Add("rating", request.Rating, dbType: DbType.Int32);
-                parameters.Add("result", dbType: DbType.String, direction: ParameterDirection.Output);
+                parameters.Add("result", dbType: DbType.String, direction: ParameterDirection.Output, size: 10);
 
                 await connection.ExecuteAsync(INSERT_RATING, parameters, commandType: CommandType.StoredProcedure);
 
                 var result = parameters.Get<string>("result");
 
-                return result ?? "";
+                return result.ToUpper() ?? "";
             }
         }
     }

@@ -2,7 +2,7 @@
 {
     public class RateProductRequest
     {
-        public int ISBN { get; set; }
+        public string ISBN { get; set; } = default!;
         public int Rating { get; set; }
     }
 }
