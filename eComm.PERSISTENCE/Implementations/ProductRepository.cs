@@ -20,6 +20,7 @@ namespace eComm.PERSISTENCE.Implementations
         private readonly string ADD_OR_REMOVE_FAVORITE = "usp_AddOrRemoveFavorites";
         private readonly string GET_FAVORITES_BY_USER = "usp_GetFavoritesByUser";
         private readonly string GET_PRODUCT_BY_URLM = "usp_GetProductByUrlM";
+        private readonly string INSERT_RATING = "usp_InsertRating";
         public ProductRepository(IDatabaseConnectionFactory connectionFactory)
         {
             _connectionFactory = connectionFactory;
@@ -148,6 +149,24 @@ namespace eComm.PERSISTENCE.Implementations
                 Product product = await connection.QueryFirstAsync<Product>(GET_PRODUCT_BY_URLM, parameters, commandType: CommandType.StoredProcedure);
 
                 return product;
+            }
+        }
+
+        public async Task<string> InsertRating(RateProductRequest request, string userId)
+        {
+            // INSERT_RATING
+
+            using (var connection = _connectionFactory.CreateConnection())
+            {
+                var parameters = new DynamicParameters();
+
+                parameters.Add("@userId", int.Parse(userId), dbType: DbType.Int32);
+                parameters.Add("@ISBN", request.ISBN, dbType: DbType.String);
+                parameters.Add("@Rating", request.Rating, dbType: DbType.Int32);
+
+                string? result = await connection.ExecuteScalarAsync<string>(GET_PRODUCT_BY_URLM, parameters, commandType: CommandType.StoredProcedure);
+
+                return result ?? "";
             }
         }
     }

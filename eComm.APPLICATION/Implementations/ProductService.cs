@@ -199,5 +199,40 @@ namespace eComm.APPLICATION.Implementations
 
             return response;
         }
+
+        public async Task<BaseResponse<string>> RateProduct(RateProductRequest request)
+        {
+            _logger.LogCritical($"RateProduct request at {DateTime.Now}");
+
+            BaseResponse<string> response = new()
+            {
+                IsSuccess = true,
+                Message = "Success"
+            };
+
+            string userId = _shareService.GetUserId();
+
+            if (String.IsNullOrEmpty(userId))
+            {
+                response.IsSuccess = false;
+                response.Message = "Token does no contain userId information";
+                return response;
+            }
+
+            try
+            {
+                string res = await _productRepository.InsertRating(request, userId);
+                response.Data = res;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Eroare RateProduct la {DateTime.Now}", ex.Message.ToString(), _shareService.GetUsername(), _shareService.GetValue());
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+                return response;
+            }
+
+            return response;
+        }
     }
 }

@@ -13,5 +13,6 @@ namespace eComm.APPLICATION.Contracts
         Task<BaseResponse<string>> AddOrRemoveFavorites(AddToFavoriteRequest request);
         Task<BaseResponse<List<string>>> GetFavorites();
         Task<BaseResponse<List<ProductDTO>>> GetFavoriteProducts();
+        Task<BaseResponse<string>> RateProduct(RateProductRequest request);
     }
 }

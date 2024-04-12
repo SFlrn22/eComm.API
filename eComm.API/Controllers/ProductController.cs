@@ -56,6 +56,18 @@ namespace eComm.API.Controllers
         }
 
         [Authorize]
+        [HttpPost("/api/RateProduct")]
+        public async Task<IActionResult> RateProduct([FromBody] RateProductRequest request)
+        {
+            if (request == null)
+                return BadRequest();
+
+            var response = await _productService.RateProduct(request);
+
+            return Ok(response);
+        }
+
+        [Authorize]
         [HttpPost("/api/GetProductByVoice")]
         public async Task<IActionResult> GetProductByVoice()
         {
