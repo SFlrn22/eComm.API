@@ -11,5 +11,6 @@
         public string ImageUrlS { get; set; } = string.Empty;
         public string ImageUrlM { get; set; } = string.Empty;
         public string ImageUrlL { get; set; } = string.Empty;
+        public int AverageRating { get; set; } = default!;
     }
 }
