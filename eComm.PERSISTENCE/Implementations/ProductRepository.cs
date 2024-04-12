@@ -158,11 +158,14 @@ namespace eComm.PERSISTENCE.Implementations
             {
                 var parameters = new DynamicParameters();
 
-                parameters.Add("@userId", int.Parse(userId), dbType: DbType.Int32);
-                parameters.Add("@isbn", request.ISBN, dbType: DbType.String);
-                parameters.Add("@rating", request.Rating, dbType: DbType.Int32);
+                parameters.Add("userId", int.Parse(userId), dbType: DbType.Int32);
+                parameters.Add("isbn", request.ISBN, dbType: DbType.String);
+                parameters.Add("rating", request.Rating, dbType: DbType.Int32);
+                parameters.Add("result", dbType: DbType.String, direction: ParameterDirection.Output);
 
-                string? result = await connection.ExecuteScalarAsync<string>(INSERT_RATING, parameters, commandType: CommandType.StoredProcedure);
+                await connection.ExecuteAsync(INSERT_RATING, parameters, commandType: CommandType.StoredProcedure);
+
+                var result = parameters.Get<string>("result");
 
                 return result ?? "";
             }
