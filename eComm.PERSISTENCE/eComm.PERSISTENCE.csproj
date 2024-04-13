@@ -14,6 +14,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="SQLScripts\DDL\" />
+    <Folder Include="SQLScripts\Functions\" />
     <Folder Include="SQLScripts\Procedures\" />
   </ItemGroup>
 
