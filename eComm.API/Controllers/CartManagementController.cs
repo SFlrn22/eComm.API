@@ -10,10 +10,12 @@ namespace eComm.API.Controllers
     public class CartManagementController : ControllerBase
     {
         private readonly ICartManagementService _cartManagementService;
+        private readonly IPaymentService _paymentService;
 
-        public CartManagementController(ICartManagementService cartManagementService)
+        public CartManagementController(ICartManagementService cartManagementService, IPaymentService paymentService)
         {
             _cartManagementService = cartManagementService;
+            _paymentService = paymentService;
         }
 
         [Authorize]
@@ -56,6 +58,14 @@ namespace eComm.API.Controllers
             }
 
             return Ok(response);
+        }
+
+        [AllowAnonymous]
+        [HttpPost("/api/CreateStripeSession")]
+        public async Task<IActionResult> CreateStripeSession()
+        {
+            _paymentService.ExecutePayment();
+            return Ok();
         }
     }
 }
