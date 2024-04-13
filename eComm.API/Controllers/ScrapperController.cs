@@ -6,22 +6,21 @@ namespace eComm.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ScrappedController : ControllerBase
+    public class ScrapperController : ControllerBase
     {
         private readonly IScrapperService _scrapperService;
-        public ScrappedController(IScrapperService scrapperService)
+        public ScrapperController(IScrapperService scrapperService)
         {
             _scrapperService = scrapperService;
         }
 
         [AllowAnonymous]
         [HttpGet("/api/Scrap")]
-        public async Task<IActionResult> Login(string isbn)
+        public async Task<IActionResult> Scrap(string isbn)
         {
             List<double> result = _scrapperService.GetPriceFromAmazon(isbn);
 
             return Ok(result);
-
         }
     }
 }
