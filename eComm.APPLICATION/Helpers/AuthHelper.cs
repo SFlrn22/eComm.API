@@ -1,5 +1,6 @@
 ﻿using eComm.DOMAIN.Models;
-using Microsoft.Extensions.Configuration;
+using eComm.DOMAIN.Utilities;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -9,14 +10,14 @@ namespace eComm.APPLICATION.Helpers
 {
     public class AuthHelper
     {
-        private readonly IConfiguration _config;
-        public AuthHelper(IConfiguration config)
+        private readonly AppSettings _appSettings;
+        public AuthHelper(IOptions<AppSettings> appsettings)
         {
-            _config = config;
+            _appSettings = appsettings.Value;
         }
         public string Generate(User user)
         {
-            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]!));
+            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_appSettings.Jwt.Key));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
             string sessionidentifier = Guid.NewGuid().ToString();
@@ -31,8 +32,8 @@ namespace eComm.APPLICATION.Helpers
                 new Claim(type: "UserId", value: user.ID.ToString())
             };
 
-            var token = new JwtSecurityToken(_config["Jwt:Issuer"],
-                _config["Jwt:Audience"],
+            var token = new JwtSecurityToken(_appSettings.Jwt.Issuer,
+                _appSettings.Jwt.Audience,
                 claims,
                 expires: DateTime.Now.AddHours(24),
                 signingCredentials: credentials);

@@ -1,32 +1,28 @@
 ﻿using System.Security.Cryptography;
-using System.Text;
 
 namespace eComm.PERSISTENCE.Helpers
 {
     public class AesDecryptHelper
     {
-        public static string Decrypt(string key, string cipherText)
+        public static string Decrypt(string cipheredtext, byte[] key, byte[] iv)
         {
-            byte[] iv = new byte[16];
-            byte[] buffer = Convert.FromBase64String(cipherText);
-
+            string simpletext = String.Empty;
+            byte[] buffer = Convert.FromBase64String(cipheredtext);
             using (Aes aes = Aes.Create())
             {
-                aes.Key = Encoding.UTF8.GetBytes(key);
-                aes.IV = iv;
-                ICryptoTransform decryptor = aes.CreateDecryptor(aes.Key, aes.IV);
-
+                ICryptoTransform decryptor = aes.CreateDecryptor(key, iv);
                 using (MemoryStream memoryStream = new MemoryStream(buffer))
                 {
-                    using (CryptoStream cryptoStream = new CryptoStream((Stream)memoryStream, decryptor, CryptoStreamMode.Read))
+                    using (CryptoStream cryptoStream = new CryptoStream(memoryStream, decryptor, CryptoStreamMode.Read))
                     {
-                        using (StreamReader streamReader = new StreamReader((Stream)cryptoStream))
+                        using (StreamReader streamReader = new StreamReader(cryptoStream))
                         {
-                            return streamReader.ReadToEnd();
+                            simpletext = streamReader.ReadToEnd();
                         }
                     }
                 }
             }
+            return simpletext;
         }
     }
 }

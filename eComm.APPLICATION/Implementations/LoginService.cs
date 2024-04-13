@@ -4,9 +4,10 @@ using eComm.APPLICATION.Helpers;
 using eComm.DOMAIN.Models;
 using eComm.DOMAIN.Requests;
 using eComm.DOMAIN.Responses;
+using eComm.DOMAIN.Utilities;
 using eComm.PERSISTENCE.Contracts;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace eComm.APPLICATION.Implementations
 {
@@ -14,13 +15,13 @@ namespace eComm.APPLICATION.Implementations
     {
         private readonly IUserRepository _userRepository;
         private readonly AuthHelper _authHelper;
-        private readonly IConfiguration _config;
         private readonly ILogger<LoginService> _logger;
-        public LoginService(IUserRepository userRepository, IConfiguration config, ILogger<LoginService> logger)
+        private readonly IOptions<AppSettings> _appSettings;
+        public LoginService(IUserRepository userRepository, ILogger<LoginService> logger, IOptions<AppSettings> appSettings)
         {
             _userRepository = userRepository;
-            _config = config;
-            _authHelper = new AuthHelper(_config);
+            _appSettings = appSettings;
+            _authHelper = new AuthHelper(_appSettings);
             _logger = logger;
         }
 

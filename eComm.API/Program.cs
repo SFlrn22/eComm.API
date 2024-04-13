@@ -1,5 +1,6 @@
 using eComm.API.TokenHandlerMiddleware;
 using eComm.APPLICATION;
+using eComm.DOMAIN.Utilities;
 using eComm.INFRASTRUCTURE;
 using eComm.PERSISTENCE;
 using eComm.PERSISTENCE.Helpers;
@@ -29,7 +30,7 @@ var columnOptions = new ColumnOptions
 };
 
 var logger = new LoggerConfiguration().WriteTo
-    .MSSqlServer(AesDecryptHelper.Decrypt("supersecretKEYThatIsHardToGuesSS", config.GetSection("ConnectionStrings:DefaultConnection").Value!),
+    .MSSqlServer(AesDecryptHelper.Decrypt(config.GetSection("ConnectionStrings:DefaultConnection").Value!, AesKeyConfiguration.Key, AesKeyConfiguration.IV),
         new MSSqlServerSinkOptions
         {
             TableName = "Logs",
@@ -38,6 +39,10 @@ var logger = new LoggerConfiguration().WriteTo
         }, columnOptions: columnOptions)
     .Enrich.FromLogContext()
     .CreateLogger();
+
+builder.Services
+  .AddOptions<AppSettings>()
+  .Bind(builder.Configuration.GetSection(AppSettings.Name));
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
@@ -92,9 +97,9 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
         ValidateAudience = true,
         ValidateLifetime = true,
         ValidateIssuerSigningKey = true,
-        ValidIssuer = builder.Configuration["Jwt:Issuer"],
-        ValidAudience = builder.Configuration["Jwt:Audience"],
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!))
+        ValidIssuer = builder.Configuration["AppSettings:Jwt:Issuer"],
+        ValidAudience = builder.Configuration["AppSettings:Jwt:Audience"],
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["AppSettings:Jwt:Key"]!))
     };
 });
 

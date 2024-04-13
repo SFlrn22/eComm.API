@@ -1,4 +1,5 @@
-﻿using eComm.PERSISTENCE.Contracts;
+﻿using eComm.DOMAIN.Utilities;
+using eComm.PERSISTENCE.Contracts;
 using eComm.PERSISTENCE.Helpers;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
@@ -16,7 +17,7 @@ namespace eComm.PERSISTENCE.Implementations
         }
         public SqlConnection CreateConnection()
         {
-            string decipheredConnectionString = AesDecryptHelper.Decrypt("supersecretKEYThatIsHardToGuesSS", _connectionString);
+            string decipheredConnectionString = AesDecryptHelper.Decrypt(_connectionString, AesKeyConfiguration.Key, AesKeyConfiguration.IV);
             return new SqlConnection(decipheredConnectionString);
         }
     }
