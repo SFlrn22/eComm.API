@@ -27,7 +27,7 @@ namespace eComm.PERSISTENCE.Implementations
 
                 await connection.ExecuteAsync(ADD_TO_CART, parameters, commandType: CommandType.StoredProcedure);
 
-                var result = parameters.Get<string>("result");
+                var result = parameters.Get<Guid>("result").ToString();
 
                 return result ?? "";
             }
@@ -53,11 +53,11 @@ namespace eComm.PERSISTENCE.Implementations
                 var parameters = new DynamicParameters();
 
                 parameters.Add("userId", userId, dbType: DbType.Int32);
-                parameters.Add("result", dbType: DbType.Guid, direction: ParameterDirection.Output);
+                parameters.Add("uniqueId", dbType: DbType.Guid, direction: ParameterDirection.Output);
 
                 await connection.ExecuteAsync(RENEW_CART, parameters, commandType: CommandType.StoredProcedure);
 
-                var result = parameters.Get<string>("result");
+                var result = parameters.Get<Guid>("uniqueId").ToString();
 
                 return result ?? "";
             }
