@@ -1,7 +1,11 @@
-﻿namespace eComm.APPLICATION.Contracts
+﻿using Stripe;
+
+namespace eComm.APPLICATION.Contracts
 {
     public interface IPaymentService
     {
-        void ExecutePayment();
+        Task ExecutePayment();
+        Task CloseActiveSession();
+        void ParseWebHookJSON(Event stripeEvent);
     }
 }

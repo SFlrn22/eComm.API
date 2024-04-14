@@ -1,5 +1,6 @@
 ﻿using eComm.DOMAIN.DTO;
 using eComm.DOMAIN.Models;
+using Stripe.Checkout;
 using System.Data;
 
 namespace eComm.DOMAIN.Utilities
@@ -22,7 +23,7 @@ namespace eComm.DOMAIN.Utilities
             return dt;
         }
 
-        public static List<ProductDTO> MapProductsToDTO(this List<Product> products)
+        public static List<ProductDTO> MapProductsToDTO(this List<Models.Product> products)
         {
             var productsDTO = new List<ProductDTO>();
 
@@ -43,7 +44,7 @@ namespace eComm.DOMAIN.Utilities
             return productsDTO;
         }
 
-        public static ProductDTO MapProductToDTO(this Product product)
+        public static ProductDTO MapProductToDTO(this Models.Product product)
         {
             return new ProductDTO()
             {
@@ -54,6 +55,33 @@ namespace eComm.DOMAIN.Utilities
                 PublicationYear = product.PublicationYear,
                 ImageUrlL = product.ImageUrlL
             };
+        }
+
+        public static List<SessionLineItemOptions> MapToLineItems(this List<CartProduct> products)
+        {
+            var lineItems = new List<SessionLineItemOptions>();
+
+            foreach (var product in products)
+            {
+                var lineItem = new SessionLineItemOptions()
+                {
+                    PriceData = new SessionLineItemPriceDataOptions()
+                    {
+                        Currency = "usd",
+                        ProductData = new()
+                        {
+                            Name = product.Title,
+                            Description = product.ISBN,
+                            Images = [product.ImageUrlS]
+                        },
+                        UnitAmount = product.Price / product.Count
+                    },
+                    Quantity = product.Count,
+                };
+                lineItems.Add(lineItem);
+            }
+
+            return lineItems;
         }
     }
 }

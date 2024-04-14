@@ -18,6 +18,7 @@
     public partial class StripeConfig
     {
         public string Key { get; set; } = string.Empty;
+        public string SecretWH { get; set; } = string.Empty;
     }
     public partial class SmtpConfig
     {

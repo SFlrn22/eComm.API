@@ -1,4 +1,5 @@
 ﻿using eComm.APPLICATION.Contracts;
+using eComm.DOMAIN.DTO;
 using eComm.DOMAIN.Utilities;
 using eComm.PERSISTENCE.Helpers;
 using Microsoft.Extensions.Options;
@@ -8,43 +9,73 @@ namespace eComm.INFRASTRUCTURE.Implementations
 {
     public class PaymentService : IPaymentService
     {
+        private readonly ICartRepository _cartRepository;
+        private readonly IShareService _shareService;
         private readonly AppSettings _appSettings;
-        public PaymentService(IOptions<AppSettings> appSettings)
+        private readonly string API_KEY;
+        public PaymentService(IOptions<AppSettings> appSettings, ICartRepository cartRepository, IShareService shareService)
         {
             _appSettings = appSettings.Value;
+            API_KEY = AesDecryptHelper.Decrypt(_appSettings.StripeConfiguration.Key, AesKeyConfiguration.Key, AesKeyConfiguration.IV);
+            _cartRepository = cartRepository;
+            _shareService = shareService;
         }
-        public void ExecutePayment()
-        {
-            StripeConfiguration.ApiKey = AesDecryptHelper.Decrypt(_appSettings.StripeConfiguration.Key, AesKeyConfiguration.Key, AesKeyConfiguration.IV);
 
-            //var service = new Stripe.Checkout.SessionService();
-            //service.Expire("cs_test_a15yrjdPt4Ee6ZRtlCM1C9kNiCRklnlkcm6AQkq7AaE2MOCZQ2qbdPjBJZ");
+        public async Task ExecutePayment()
+        {
+            string userId = _shareService.GetUserId();
+
+            StripeConfiguration.ApiKey = API_KEY;
+            var service = new Stripe.Checkout.SessionService();
+
+            ActiveCartDTO cart = await _cartRepository.GetUserActiveCart(int.Parse(userId));
+
+            var lineItems = cart.Products.MapToLineItems();
 
             var options = new Stripe.Checkout.SessionCreateOptions
             {
                 SuccessUrl = "https://example.com/success",
-                LineItems = new List<Stripe.Checkout.SessionLineItemOptions>
-                {
-                    new Stripe.Checkout.SessionLineItemOptions
-                    {
-                        PriceData = new Stripe.Checkout.SessionLineItemPriceDataOptions()
-                        {
-                            Currency = "usd",
-                            ProductData = new()
-                            {
-                                Name = "test",
-                                Description = "test",
-                                Images = ["http://images.amazon.com/images/P/0195153448.01.LZZZZZZZ.jpg"]
-                            },
-                            UnitAmount = 25
-                        },
-                        Quantity = 2,
-                    },
-                },
+                CancelUrl = "https://example.com/cancel",
+                LineItems = lineItems,
                 Mode = "payment",
             };
-            //var service = new Stripe.Checkout.SessionService();
-            //var result = service.Create(options);
+
+            var result = await service.CreateAsync(options);
+
+            await _cartRepository.AddCartSession(int.Parse(userId), result.Id);
+        }
+        public async Task CloseActiveSession()
+        {
+            string userId = _shareService.GetUserId();
+
+            StripeConfiguration.ApiKey = API_KEY;
+            var service = new Stripe.Checkout.SessionService();
+
+            string sessionId = await _cartRepository.GetActiveSession(int.Parse(userId));
+
+            await service.ExpireAsync(sessionId);
+        }
+
+        public void ParseWebHookJSON(Event stripeEvent)
+        {
+            if (stripeEvent.Type == Events.PaymentIntentSucceeded)
+            {
+                var paymentIntent = stripeEvent.Data.Object as PaymentIntent;
+            }
+            else if (stripeEvent.Type == Events.PaymentMethodAttached)
+            {
+                var paymentMethod = stripeEvent.Data.Object as PaymentMethod;
+            }
+            else if (stripeEvent.Type == Events.PaymentIntentSucceeded)
+            {
+                Console.WriteLine(stripeEvent);
+                // Trimite prin email receipt
+                // marcheaza ca platit in baza de date
+            }
+            else
+            {
+                Console.WriteLine($"Unhandled event type: {stripeEvent.Type}");
+            }
         }
     }
 }
