@@ -4,6 +4,7 @@ using eComm.DOMAIN.Utilities;
 using eComm.PERSISTENCE.Helpers;
 using Microsoft.Extensions.Options;
 using Stripe;
+using System.Text.Json;
 
 namespace eComm.INFRASTRUCTURE.Implementations
 {
@@ -34,8 +35,8 @@ namespace eComm.INFRASTRUCTURE.Implementations
 
             var options = new Stripe.Checkout.SessionCreateOptions
             {
-                SuccessUrl = "https://example.com/success",
-                CancelUrl = "https://example.com/cancel",
+                SuccessUrl = "http://localhost:4200/success-payment",
+                CancelUrl = "https://example.com/failed-payment",
                 LineItems = lineItems,
                 Mode = "payment",
             };
@@ -61,20 +62,20 @@ namespace eComm.INFRASTRUCTURE.Implementations
             if (stripeEvent.Type == Events.PaymentIntentSucceeded)
             {
                 var paymentIntent = stripeEvent.Data.Object as PaymentIntent;
+                Console.WriteLine(stripeEvent);
+                // Trimite prin email receipt
+                // marcheaza ca platit in baza de date
             }
             else if (stripeEvent.Type == Events.PaymentMethodAttached)
             {
                 var paymentMethod = stripeEvent.Data.Object as PaymentMethod;
             }
-            else if (stripeEvent.Type == Events.PaymentIntentSucceeded)
-            {
-                Console.WriteLine(stripeEvent);
-                // Trimite prin email receipt
-                // marcheaza ca platit in baza de date
-            }
             else
             {
+                var obj = JsonSerializer.Serialize(stripeEvent.Data.Object);
                 Console.WriteLine($"Unhandled event type: {stripeEvent.Type}");
+                Console.WriteLine($"Unhandled event object: {obj}");
+                Console.WriteLine($"-------------------------------------------------------------------");
             }
         }
     }
