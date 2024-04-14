@@ -10,7 +10,8 @@ namespace eComm.INFRASTRUCTURE
         public static IServiceCollection AddInfrastructureServices(this IServiceCollection services)
         {
             services.AddScoped<IExternalDepRepository, ExternalDepRepository>()
-                    .AddScoped<IPaymentService, PaymentService>();
+                    .AddScoped<IPaymentService, PaymentService>()
+                    .AddScoped<IEmailService, EmailService>();
             return services;
         }
     }

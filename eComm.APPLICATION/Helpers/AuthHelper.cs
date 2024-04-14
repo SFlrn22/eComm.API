@@ -17,7 +17,7 @@ namespace eComm.APPLICATION.Helpers
         }
         public string Generate(User user)
         {
-            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_appSettings.Jwt.Key));
+            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_appSettings.JwtConfiguration.Key));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
             string sessionidentifier = Guid.NewGuid().ToString();
@@ -32,8 +32,8 @@ namespace eComm.APPLICATION.Helpers
                 new Claim(type: "UserId", value: user.ID.ToString())
             };
 
-            var token = new JwtSecurityToken(_appSettings.Jwt.Issuer,
-                _appSettings.Jwt.Audience,
+            var token = new JwtSecurityToken(_appSettings.JwtConfiguration.Issuer,
+                _appSettings.JwtConfiguration.Audience,
                 claims,
                 expires: DateTime.Now.AddHours(24),
                 signingCredentials: credentials);
