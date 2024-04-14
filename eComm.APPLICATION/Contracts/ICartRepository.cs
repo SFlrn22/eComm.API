@@ -6,9 +6,10 @@ namespace eComm.APPLICATION.Contracts
     {
         Task<string> AddToCart(int userId, int bookId);
         Task RemoveFromCart(int userId, int bookId);
-        Task<string> RenewCart(int userId);
+        Task<string> RenewCart(string sessionId);
         Task AddCartSession(int userId, string sessionId);
         Task<string> GetActiveSession(int userId);
+        Task CompleteSession(string sessionId);
         Task<ActiveCartDTO> GetUserActiveCart(int userId);
     }
 }

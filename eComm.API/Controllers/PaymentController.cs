@@ -1,5 +1,6 @@
 ﻿using eComm.APPLICATION.Contracts;
 using eComm.DOMAIN.Utilities;
+using eComm.PERSISTENCE.Helpers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
@@ -20,7 +21,7 @@ namespace eComm.API.Controllers
             _appSettings = appSettings.Value;
         }
 
-        [AllowAnonymous]
+        [Authorize]
         [HttpPost("/api/CreateStripeSession")]
         public async Task<IActionResult> CreateStripeSession()
         {
@@ -28,7 +29,7 @@ namespace eComm.API.Controllers
             return Ok();
         }
 
-        [AllowAnonymous]
+        [Authorize]
         [HttpPost("/api/CloseStripeSession")]
         public async Task<IActionResult> CloseStripeSession()
         {
@@ -36,6 +37,7 @@ namespace eComm.API.Controllers
             return Ok();
         }
 
+        [AllowAnonymous]
         [HttpPost("/api/Webhook")]
         public async Task<IActionResult> WebHook()
         {
@@ -46,7 +48,7 @@ namespace eComm.API.Controllers
                 var stripeEvent = EventUtility.ConstructEvent(
                      json,
                      Request.Headers["Stripe-Signature"],
-                     _appSettings.StripeConfiguration.SecretWH
+                     AesDecryptHelper.Decrypt(_appSettings.StripeConfiguration.SecretWH, AesKeyConfiguration.Key, AesKeyConfiguration.IV)
                 );
                 _paymentService.ParseWebHookJSON(stripeEvent);
                 return Ok();

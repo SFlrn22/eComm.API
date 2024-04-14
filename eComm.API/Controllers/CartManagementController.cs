@@ -40,19 +40,5 @@ namespace eComm.API.Controllers
 
             return Ok(response);
         }
-
-        [Authorize]
-        [HttpPost("/api/RenewCart")]
-        public async Task<IActionResult> RenewCart()
-        {
-            BaseResponse<string> response = await _cartManagementService.RenewCart();
-
-            if (!response.IsSuccess)
-            {
-                return BadRequest(response);
-            }
-
-            return Ok(response);
-        }
     }
 }

@@ -70,33 +70,5 @@ namespace eComm.APPLICATION.Implementations
 
             return response;
         }
-
-        public async Task<BaseResponse<string>> RenewCart()
-        {
-            _logger.LogCritical($"RenewCart request at {DateTime.Now}");
-
-            BaseResponse<string> response = new()
-            {
-                IsSuccess = true,
-                Message = "Success"
-            };
-
-            string userId = _shareService.GetUserId();
-
-            try
-            {
-                string res = await _cartRepository.RenewCart(int.Parse(userId));
-                response.Data = res;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError($"Eroare RenewCart la {DateTime.Now}", ex.Message.ToString(), _shareService.GetUsername(), _shareService.GetValue());
-                response.IsSuccess = false;
-                response.Message = ex.Message;
-                return response;
-            }
-
-            return response;
-        }
     }
 }

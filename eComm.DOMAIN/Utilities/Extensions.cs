@@ -74,7 +74,7 @@ namespace eComm.DOMAIN.Utilities
                             Description = product.ISBN,
                             Images = [product.ImageUrlS]
                         },
-                        UnitAmount = product.Price / product.Count
+                        UnitAmount = (product.Price * 100) / product.Count
                     },
                     Quantity = product.Count,
                 };

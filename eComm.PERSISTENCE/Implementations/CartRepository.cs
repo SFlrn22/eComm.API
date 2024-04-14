@@ -17,6 +17,7 @@ namespace eComm.PERSISTENCE.Implementations
         private readonly string ADD_CART_SESSION = "usp_AddCartSession";
         private readonly string GET_ACTIVE_SESSION = "usp_GetActiveSession";
         private readonly string GET_ACTIVE_CART = "usp_GetUserActiveCart";
+        private readonly string MARK_SESSION_COMPLETE = "usp_MarkSessionComplete";
 
         public CartRepository(IDatabaseConnectionFactory connectionFactory) => _connectionFactory = connectionFactory;
 
@@ -78,13 +79,13 @@ namespace eComm.PERSISTENCE.Implementations
             }
         }
 
-        public async Task<string> RenewCart(int userId)
+        public async Task<string> RenewCart(string sessionId)
         {
             using (var connection = _connectionFactory.CreateConnection())
             {
                 var parameters = new DynamicParameters();
 
-                parameters.Add("userId", userId, dbType: DbType.Int32);
+                parameters.Add("sessionId", sessionId, dbType: DbType.String);
                 parameters.Add("uniqueId", dbType: DbType.Guid, direction: ParameterDirection.Output);
 
                 await connection.ExecuteAsync(RENEW_CART, parameters, commandType: CommandType.StoredProcedure);
@@ -117,6 +118,18 @@ namespace eComm.PERSISTENCE.Implementations
                 };
 
                 return result;
+            }
+        }
+
+        public async Task CompleteSession(string sessionId)
+        {
+            using (var connection = _connectionFactory.CreateConnection())
+            {
+                var parameters = new DynamicParameters();
+
+                parameters.Add("sessionId", sessionId, dbType: DbType.String);
+
+                await connection.ExecuteAsync(MARK_SESSION_COMPLETE, parameters, commandType: CommandType.StoredProcedure);
             }
         }
     }

@@ -6,6 +6,5 @@ namespace eComm.APPLICATION.Contracts
     {
         Task<BaseResponse<string>> AddToCart(int bookId);
         Task<BaseResponse<string>> RemoveFromCart(int bookId);
-        Task<BaseResponse<string>> RenewCart();
     }
 }

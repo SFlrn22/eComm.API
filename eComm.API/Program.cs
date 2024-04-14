@@ -55,12 +55,14 @@ builder.Services.AddPersistenceServices();
 builder.Services.AddApplicationServices();
 builder.Services.AddInfrastructureServices();
 
+var origins = builder.Configuration.GetSection("CorsOrigins").GetChildren().Select(x => x.Value).ToArray();
+
 builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(
         policy =>
         {
-            policy.WithOrigins("http://localhost:5173", "http://localhost:4200").AllowAnyHeader().AllowAnyMethod();
+            policy.WithOrigins(origins).AllowAnyHeader().AllowAnyMethod();
         });
 });
 builder.Services.AddSwaggerGen(options =>

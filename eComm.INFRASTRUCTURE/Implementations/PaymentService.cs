@@ -4,6 +4,7 @@ using eComm.DOMAIN.Utilities;
 using eComm.PERSISTENCE.Helpers;
 using Microsoft.Extensions.Options;
 using Stripe;
+using Stripe.Checkout;
 using System.Text.Json;
 
 namespace eComm.INFRASTRUCTURE.Implementations
@@ -12,14 +13,16 @@ namespace eComm.INFRASTRUCTURE.Implementations
     {
         private readonly ICartRepository _cartRepository;
         private readonly IShareService _shareService;
+        private readonly IEmailService _emailService;
         private readonly AppSettings _appSettings;
         private readonly string API_KEY;
-        public PaymentService(IOptions<AppSettings> appSettings, ICartRepository cartRepository, IShareService shareService)
+        public PaymentService(IOptions<AppSettings> appSettings, ICartRepository cartRepository, IShareService shareService, IEmailService emailService)
         {
             _appSettings = appSettings.Value;
             API_KEY = AesDecryptHelper.Decrypt(_appSettings.StripeConfiguration.Key, AesKeyConfiguration.Key, AesKeyConfiguration.IV);
             _cartRepository = cartRepository;
             _shareService = shareService;
+            _emailService = emailService;
         }
 
         public async Task ExecutePayment()
@@ -36,7 +39,7 @@ namespace eComm.INFRASTRUCTURE.Implementations
             var options = new Stripe.Checkout.SessionCreateOptions
             {
                 SuccessUrl = "http://localhost:4200/success-payment",
-                CancelUrl = "https://example.com/failed-payment",
+                CancelUrl = "https://localhost:4200/failed-payment",
                 LineItems = lineItems,
                 Mode = "payment",
             };
@@ -52,23 +55,33 @@ namespace eComm.INFRASTRUCTURE.Implementations
             StripeConfiguration.ApiKey = API_KEY;
             var service = new Stripe.Checkout.SessionService();
 
-            string sessionId = await _cartRepository.GetActiveSession(int.Parse(userId));
-
-            await service.ExpireAsync(sessionId);
+            try
+            {
+                string sessionId = await _cartRepository.GetActiveSession(int.Parse(userId));
+                await _cartRepository.CompleteSession(sessionId);
+                await service.ExpireAsync(sessionId);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
-        public void ParseWebHookJSON(Event stripeEvent)
+        public async void ParseWebHookJSON(Event stripeEvent)
         {
-            if (stripeEvent.Type == Events.PaymentIntentSucceeded)
+            if (stripeEvent.Type == Events.CheckoutSessionCompleted)
             {
-                var paymentIntent = stripeEvent.Data.Object as PaymentIntent;
-                Console.WriteLine(stripeEvent);
-                // Trimite prin email receipt
-                // marcheaza ca platit in baza de date
+                var session = stripeEvent.Data.Object as Session;
+                await _cartRepository.CompleteSession(session!.Id);
+                if (session.PaymentStatus == "paid")
+                {
+                    string newCartId = await _cartRepository.RenewCart(session!.Id);
+                }
             }
-            else if (stripeEvent.Type == Events.PaymentMethodAttached)
+            else if (stripeEvent.Type == Events.ChargeUpdated)
             {
-                var paymentMethod = stripeEvent.Data.Object as PaymentMethod;
+                var charge = stripeEvent.Data.Object as Charge;
+                await _emailService.SendEmailAsync($"Receipt for transaction: {charge?.Id}", $"{charge?.ReceiptUrl}", $"{charge?.BillingDetails.Email}");
             }
             else
             {
