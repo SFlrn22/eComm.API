@@ -1,4 +1,5 @@
 ﻿using eComm.APPLICATION.Contracts;
+using eComm.DOMAIN.DTO;
 using eComm.DOMAIN.Responses;
 using Microsoft.Extensions.Logging;
 
@@ -36,6 +37,34 @@ namespace eComm.APPLICATION.Implementations
             catch (Exception ex)
             {
                 _logger.LogError($"Eroare AddToCart la {DateTime.Now}", ex.Message.ToString(), _shareService.GetUsername(), _shareService.GetValue());
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+                return response;
+            }
+
+            return response;
+        }
+
+        public async Task<BaseResponse<ActiveCartDTO>> GetActiveCart()
+        {
+            _logger.LogCritical($"GetActiveCart request at {DateTime.Now}");
+
+            BaseResponse<ActiveCartDTO> response = new()
+            {
+                IsSuccess = true,
+                Message = "Success"
+            };
+
+            string userId = _shareService.GetUserId();
+
+            try
+            {
+                var res = await _cartRepository.GetUserActiveCart(int.Parse(userId));
+                response.Data = res;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Eroare GetActiveCart la {DateTime.Now}", ex.Message.ToString(), _shareService.GetUsername(), _shareService.GetValue());
                 response.IsSuccess = false;
                 response.Message = ex.Message;
                 return response;

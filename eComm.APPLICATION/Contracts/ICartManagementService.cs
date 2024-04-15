@@ -1,4 +1,5 @@
-﻿using eComm.DOMAIN.Responses;
+﻿using eComm.DOMAIN.DTO;
+using eComm.DOMAIN.Responses;
 
 namespace eComm.APPLICATION.Contracts
 {
@@ -6,5 +7,6 @@ namespace eComm.APPLICATION.Contracts
     {
         Task<BaseResponse<string>> AddToCart(int bookId, int count);
         Task<BaseResponse<string>> RemoveFromCart(int bookId);
+        Task<BaseResponse<ActiveCartDTO>> GetActiveCart();
     }
 }
