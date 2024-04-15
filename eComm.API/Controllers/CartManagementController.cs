@@ -15,9 +15,9 @@ namespace eComm.API.Controllers
 
         [Authorize]
         [HttpPost("/api/AddToCart")]
-        public async Task<IActionResult> AddToCart(int bookId)
+        public async Task<IActionResult> AddToCart(int bookId, int count)
         {
-            BaseResponse<string> response = await _cartManagementService.AddToCart(bookId);
+            BaseResponse<string> response = await _cartManagementService.AddToCart(bookId, count);
 
             if (!response.IsSuccess)
             {

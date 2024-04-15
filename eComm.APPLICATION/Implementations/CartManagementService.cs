@@ -16,7 +16,7 @@ namespace eComm.APPLICATION.Implementations
             _shareService = shareService;
         }
 
-        public async Task<BaseResponse<string>> AddToCart(int bookId)
+        public async Task<BaseResponse<string>> AddToCart(int bookId, int count)
         {
             _logger.LogCritical($"AddToCart request at {DateTime.Now}");
 
@@ -30,7 +30,7 @@ namespace eComm.APPLICATION.Implementations
 
             try
             {
-                string res = await _cartRepository.AddToCart(int.Parse(userId), bookId);
+                string res = await _cartRepository.AddToCart(int.Parse(userId), bookId, count);
                 response.Data = res;
             }
             catch (Exception ex)

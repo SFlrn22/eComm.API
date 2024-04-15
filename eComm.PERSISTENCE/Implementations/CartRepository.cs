@@ -34,7 +34,7 @@ namespace eComm.PERSISTENCE.Implementations
             }
         }
 
-        public async Task<string> AddToCart(int userId, int bookId)
+        public async Task<string> AddToCart(int userId, int bookId, int count)
         {
             using (var connection = _connectionFactory.CreateConnection())
             {
@@ -42,6 +42,7 @@ namespace eComm.PERSISTENCE.Implementations
 
                 parameters.Add("userId", userId, dbType: DbType.Int32);
                 parameters.Add("bookId", bookId, dbType: DbType.Int32);
+                parameters.Add("count", count, dbType: DbType.Int32);
                 parameters.Add("result", dbType: DbType.Guid, direction: ParameterDirection.Output);
 
                 await connection.ExecuteAsync(ADD_TO_CART, parameters, commandType: CommandType.StoredProcedure);

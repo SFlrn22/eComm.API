@@ -4,7 +4,7 @@ namespace eComm.APPLICATION.Contracts
 {
     public interface ICartManagementService
     {
-        Task<BaseResponse<string>> AddToCart(int bookId);
+        Task<BaseResponse<string>> AddToCart(int bookId, int count);
         Task<BaseResponse<string>> RemoveFromCart(int bookId);
     }
 }
