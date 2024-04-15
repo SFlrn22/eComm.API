@@ -1,4 +1,5 @@
 ﻿using eComm.APPLICATION.Contracts;
+using eComm.DOMAIN.Responses;
 using eComm.DOMAIN.Utilities;
 using eComm.PERSISTENCE.Helpers;
 using Microsoft.AspNetCore.Authorization;
@@ -26,7 +27,13 @@ namespace eComm.API.Controllers
         public async Task<IActionResult> CreateStripeSession()
         {
             string checkoutUrl = await _paymentService.ExecutePayment();
-            return Ok(checkoutUrl);
+            BaseResponse<string> response = new()
+            {
+                Data = checkoutUrl,
+                IsSuccess = true,
+                Message = "Ok"
+            };
+            return Ok(response);
         }
 
         [Authorize]

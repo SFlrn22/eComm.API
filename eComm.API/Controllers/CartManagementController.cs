@@ -1,5 +1,6 @@
 ﻿using eComm.APPLICATION.Contracts;
 using eComm.DOMAIN.DTO;
+using eComm.DOMAIN.Requests;
 using eComm.DOMAIN.Responses;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -16,9 +17,9 @@ namespace eComm.API.Controllers
 
         [Authorize]
         [HttpPost("/api/AddToCart")]
-        public async Task<IActionResult> AddToCart(int bookId, int count)
+        public async Task<IActionResult> AddToCart(AddToCartRequest request)
         {
-            BaseResponse<string> response = await _cartManagementService.AddToCart(bookId, count);
+            BaseResponse<string> response = await _cartManagementService.AddToCart(request.BookId, request.Count);
 
             if (!response.IsSuccess)
             {
