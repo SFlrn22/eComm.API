@@ -25,8 +25,8 @@ namespace eComm.API.Controllers
         [HttpPost("/api/CreateStripeSession")]
         public async Task<IActionResult> CreateStripeSession()
         {
-            await _paymentService.ExecutePayment();
-            return Ok();
+            string checkoutUrl = await _paymentService.ExecutePayment();
+            return Ok(checkoutUrl);
         }
 
         [Authorize]

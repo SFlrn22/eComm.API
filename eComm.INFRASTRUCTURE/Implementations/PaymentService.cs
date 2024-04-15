@@ -25,7 +25,7 @@ namespace eComm.INFRASTRUCTURE.Implementations
             _emailService = emailService;
         }
 
-        public async Task ExecutePayment()
+        public async Task<string> ExecutePayment()
         {
             string userId = _shareService.GetUserId();
 
@@ -47,6 +47,8 @@ namespace eComm.INFRASTRUCTURE.Implementations
             var result = await service.CreateAsync(options);
 
             await _cartRepository.AddCartSession(int.Parse(userId), result.Id);
+
+            return result.Url;
         }
         public async Task CloseActiveSession()
         {
