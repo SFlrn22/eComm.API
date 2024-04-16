@@ -31,9 +31,9 @@ namespace eComm.API.Controllers
 
         [Authorize]
         [HttpPost("/api/RemoveFromCart")]
-        public async Task<IActionResult> RemoveFromCart(int bookId)
+        public async Task<IActionResult> RemoveFromCart(RemoveFromCartRequest request)
         {
-            BaseResponse<string> response = await _cartManagementService.RemoveFromCart(bookId);
+            BaseResponse<string> response = await _cartManagementService.RemoveFromCart(request.BookId);
 
             if (!response.IsSuccess)
             {
