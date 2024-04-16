@@ -1,4 +1,5 @@
 ﻿using eComm.APPLICATION.Contracts;
+using eComm.DOMAIN.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,9 +17,17 @@ namespace eComm.API.Controllers
 
         [AllowAnonymous]
         [HttpGet("/api/Scrap")]
-        public async Task<IActionResult> Scrap(string isbn)
+        public IActionResult Scrap(string isbn)
         {
             List<double> result = _scrapperService.GetPriceFromAmazon(isbn);
+
+            return Ok(result);
+        }
+        [AllowAnonymous]
+        [HttpGet("/api/ScrapData")]
+        public async Task<IActionResult> ScrapDetails(string isbn)
+        {
+            ScrappedData result = await _scrapperService.GetCatAndDesc(isbn);
 
             return Ok(result);
         }
