@@ -25,7 +25,7 @@ namespace eComm.PERSISTENCE.Implementations
                 parameters.Add("exception", ex.Message.ToString(), dbType: DbType.String);
                 parameters.Add("stacktrace", ex.ToString(), dbType: DbType.String);
                 parameters.Add("username", username, dbType: DbType.String);
-                parameters.Add("sessionIdentifier", sessionIdentifier, dbType: DbType.String);
+                parameters.Add("sessionIdentifier", sessionIdentifier, dbType: DbType.Guid);
                 await connection.ExecuteAsync(INSERT_LOG, parameters, commandType: CommandType.StoredProcedure);
             }
         }
@@ -39,7 +39,7 @@ namespace eComm.PERSISTENCE.Implementations
                 parameters.Add("response", JsonSerializer.Serialize(response), dbType: DbType.String);
                 parameters.Add("level", "Success", dbType: DbType.String);
                 parameters.Add("username", username, dbType: DbType.String);
-                parameters.Add("sessionIdentifier", sessionIdentifier, dbType: DbType.String);
+                parameters.Add("sessionIdentifier", sessionIdentifier, dbType: DbType.Guid);
                 await connection.ExecuteAsync(INSERT_LOG, parameters, commandType: CommandType.StoredProcedure);
             }
         }
