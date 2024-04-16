@@ -11,7 +11,6 @@ namespace eComm.APPLICATION
             services.AddScoped<ILoginService, LoginService>()
                     .AddScoped<IRecommenderService, RecommenderService>()
                     .AddScoped<IProductService, ProductService>()
-                    .AddScoped<IScrapperService, ScrapperService>()
                     .AddScoped<ICartManagementService, CartManagementService>()
                     .AddSingleton<IShareService, ShareService>();
             return services;

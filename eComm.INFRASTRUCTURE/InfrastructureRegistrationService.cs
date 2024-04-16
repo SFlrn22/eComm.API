@@ -1,4 +1,5 @@
 ﻿using eComm.APPLICATION.Contracts;
+using eComm.APPLICATION.Implementations;
 using eComm.INFRASTRUCTURE.Contracts;
 using eComm.INFRASTRUCTURE.Implementations;
 using Microsoft.Extensions.DependencyInjection;
@@ -11,7 +12,8 @@ namespace eComm.INFRASTRUCTURE
         {
             services.AddScoped<IExternalDepRepository, ExternalDepRepository>()
                     .AddScoped<IPaymentService, PaymentService>()
-                    .AddScoped<IEmailService, EmailService>();
+                    .AddScoped<IEmailService, EmailService>()
+                    .AddScoped<IScrapperService, ScrapperService>();
             return services;
         }
     }

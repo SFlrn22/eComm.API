@@ -13,11 +13,13 @@ namespace eComm.APPLICATION.Implementations
         private readonly IProductRepository _productRepository;
         private readonly ILogger<ProductService> _logger;
         private readonly IShareService _shareService;
-        public ProductService(IProductRepository productRepository, ILogger<ProductService> logger, IShareService shareService)
+        private readonly IScrapperService _scrapperService;
+        public ProductService(IProductRepository productRepository, ILogger<ProductService> logger, IShareService shareService, IScrapperService scrapperService)
         {
             _productRepository = productRepository;
             _logger = logger;
             _shareService = shareService;
+            _scrapperService = scrapperService;
         }
 
         public async Task<BaseResponse<Product>> GetProduct(int id)
@@ -35,6 +37,14 @@ namespace eComm.APPLICATION.Implementations
             try
             {
                 Product product = await _productRepository.GetProduct(id);
+                if (product.Description == null || product.Category == null || product.Price == 0)
+                {
+                    var prices = _scrapperService.GetPriceFromAmazon(product.ISBN);
+                    ScrappedData data = await _scrapperService.GetCatAndDesc(product.ISBN);
+                    product.Price = Convert.ToInt32(prices[0]);
+                    product.Description = data.Description;
+                    product.Category = data.Category;
+                }
                 response.Data = product;
             }
             catch (Exception ex)

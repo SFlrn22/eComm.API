@@ -10,32 +10,39 @@ namespace eComm.APPLICATION.Implementations
         public async Task<ScrappedData> GetCatAndDesc(string isbn)
         {
             string url = $"https://www.googleapis.com/books/v1/volumes?q=isbn:{isbn}";
-            using (HttpClient client = new HttpClient())
+            try
             {
-                HttpResponseMessage response = await client.GetAsync(url);
-
-                response.EnsureSuccessStatusCode();
-
-
-                string json = await response.Content.ReadAsStringAsync();
-                dynamic data = JObject.Parse(json);
-
-                string selfLink = data.items[0].selfLink;
-
-                HttpResponseMessage response2 = await client.GetAsync(selfLink);
-                string json2 = await response2.Content.ReadAsStringAsync();
-                dynamic data2 = JObject.Parse(json2);
-
-                string category = data.items[0].volumeInfo.categories[0];
-                string description = data2.volumeInfo.description;
-
-                ScrappedData result = new()
+                using (HttpClient client = new HttpClient())
                 {
-                    Category = category,
-                    Description = description
-                };
+                    HttpResponseMessage response = await client.GetAsync(url);
 
-                return result;
+                    response.EnsureSuccessStatusCode();
+
+
+                    string json = await response.Content.ReadAsStringAsync();
+                    dynamic data = JObject.Parse(json);
+
+                    string selfLink = data.items[0].selfLink;
+
+                    HttpResponseMessage response2 = await client.GetAsync(selfLink);
+                    string json2 = await response2.Content.ReadAsStringAsync();
+                    dynamic data2 = JObject.Parse(json2);
+
+                    string category = data.items[0].volumeInfo.categories[0];
+                    string description = data2.volumeInfo.description;
+
+                    ScrappedData result = new()
+                    {
+                        Category = category,
+                        Description = description
+                    };
+
+                    return result;
+                }
+            }
+            catch (Exception ex)
+            {
+                return new ScrappedData();
             }
         }
 
