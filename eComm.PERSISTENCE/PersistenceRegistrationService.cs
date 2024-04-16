@@ -12,7 +12,8 @@ namespace eComm.PERSISTENCE
             services.AddScoped<IDatabaseConnectionFactory, DatabaseConnectionFactory>()
                     .AddScoped<IUserRepository, UserRepository>()
                     .AddScoped<IProductRepository, ProductRepository>()
-                    .AddScoped<ICartRepository, CartRepository>();
+                    .AddScoped<ICartRepository, CartRepository>()
+                    .AddScoped<ILogRepository, LogRepository>();
 
             return services;
         }
