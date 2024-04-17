@@ -7,7 +7,7 @@ namespace eComm.APPLICATION.Contracts
 {
     public interface IProductService
     {
-        Task<BaseResponse<ProductPaginationResultDTO>> GetProducts(int pageNumber, int itemsPerPage, string? sortingColumn, string? sortingType, string? filterColumn, string? filterValue);
+        Task<BaseResponse<ProductPaginationResultDTO>> GetProducts(GetProductsRequest request);
         Task<BaseResponse<Product>> GetProduct(int id);
         Task<BaseResponse<List<Product>>> GetProductsByName(string productName);
         Task<BaseResponse<string>> AddOrRemoveFavorites(AddToFavoriteRequest request);

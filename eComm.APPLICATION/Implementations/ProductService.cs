@@ -14,18 +14,18 @@ namespace eComm.APPLICATION.Implementations
         private readonly ILogger<ProductService> _logger;
         private readonly IShareService _shareService;
         private readonly IScrapperService _scrapperService;
-        public ProductService(IProductRepository productRepository, ILogger<ProductService> logger, IShareService shareService, IScrapperService scrapperService)
+        private readonly ILogRepository _logRepository;
+        public ProductService(IProductRepository productRepository, ILogger<ProductService> logger, IShareService shareService, IScrapperService scrapperService, ILogRepository logRepository)
         {
             _productRepository = productRepository;
             _logger = logger;
             _shareService = shareService;
             _scrapperService = scrapperService;
+            _logRepository = logRepository;
         }
 
         public async Task<BaseResponse<Product>> GetProduct(int id)
         {
-            //LogContext.PushProperty("Username", _shareService.GetUsername());
-            //LogContext.PushProperty("SessionIdentifier", _shareService.GetValue());
             _logger.LogCritical($"GetProduct request at {DateTime.Now}");
 
             BaseResponse<Product> response = new()
@@ -52,9 +52,11 @@ namespace eComm.APPLICATION.Implementations
                 _logger.LogError($"Eroare GetProduct la {DateTime.Now}", ex.Message.ToString(), _shareService.GetUsername(), _shareService.GetValue());
                 response.IsSuccess = false;
                 response.Message = ex.Message;
+                await _logRepository.LogException(id, ex, _shareService.GetUsername(), _shareService.GetValue(), "GetProduct");
                 return response;
             }
 
+            await _logRepository.LogSuccess(id, response, _shareService.GetUsername(), _shareService.GetValue(), "GetProduct");
             return response;
         }
 
@@ -78,16 +80,15 @@ namespace eComm.APPLICATION.Implementations
                 _logger.LogError($"Eroare GetProductsByName la {DateTime.Now}", ex.Message.ToString());
                 response.IsSuccess = false;
                 response.Message = ex.Message;
+                await _logRepository.LogException(productName, ex, _shareService.GetUsername(), _shareService.GetValue(), "");
                 return response;
             }
-
+            await _logRepository.LogSuccess(productName, response, _shareService.GetUsername(), _shareService.GetValue(), "");
             return response;
         }
 
-        public async Task<BaseResponse<ProductPaginationResultDTO>> GetProducts(int pageNumber, int itemsPerPage, string? sortingColumn, string? sortingType, string? filterColumn, string? filterValue)
+        public async Task<BaseResponse<ProductPaginationResultDTO>> GetProducts(GetProductsRequest request)
         {
-            //LogContext.PushProperty("Username", _shareService.GetUsername());
-            //LogContext.PushProperty("SessionIdentifier", _shareService.GetValue());
             _logger.LogCritical($"GetProducts request at {DateTime.Now}");
 
             BaseResponse<ProductPaginationResultDTO> response = new()
@@ -98,7 +99,16 @@ namespace eComm.APPLICATION.Implementations
 
             try
             {
-                ProductPaginationResultDTO paginationResult = await _productRepository.GetProducts(pageNumber, itemsPerPage, sortingColumn, sortingType, filterColumn, filterValue);
+                ProductPaginationResultDTO paginationResult = await _productRepository.GetProducts(request.PageNumber, request.ItemsPerPage, request.SortingColumn, request.SortingType, request.FilterColumn, request.FilterValue);
+                if (request.FilterColumn == "ISBN" && string.IsNullOrEmpty(paginationResult.ProductList[0].Description))
+                {
+                    var product = paginationResult.ProductList[0];
+                    var prices = _scrapperService.GetPriceFromAmazon(product.ISBN);
+                    ScrappedData data = await _scrapperService.GetCatAndDesc(product.ISBN);
+                    product.Price = Convert.ToInt32(prices[0]);
+                    product.Description = data.Description;
+                    product.Category = data.Category;
+                }
                 response.Data = paginationResult;
             }
             catch (Exception ex)
@@ -106,9 +116,11 @@ namespace eComm.APPLICATION.Implementations
                 _logger.LogError($"Eroare GetProducts la {DateTime.Now}", ex.Message.ToString(), _shareService.GetUsername(), _shareService.GetValue());
                 response.IsSuccess = false;
                 response.Message = ex.Message;
+                await _logRepository.LogException(request, ex, _shareService.GetUsername(), _shareService.GetValue(), "GetProducts");
                 return response;
             }
 
+            await _logRepository.LogSuccess(request, response, _shareService.GetUsername(), _shareService.GetValue(), "GetProducts");
             return response;
         }
 
@@ -133,9 +145,10 @@ namespace eComm.APPLICATION.Implementations
                 _logger.LogError($"Eroare AddOrRemoveFavorites la {DateTime.Now}", ex.Message.ToString(), _shareService.GetUsername(), _shareService.GetValue());
                 response.IsSuccess = false;
                 response.Message = ex.Message;
+                await _logRepository.LogException(request, ex, _shareService.GetUsername(), _shareService.GetValue(), "FavoriteHandler");
                 return response;
             }
-
+            await _logRepository.LogSuccess(request, response, _shareService.GetUsername(), _shareService.GetValue(), "FavoriteHandler");
             return response;
         }
 
@@ -168,9 +181,10 @@ namespace eComm.APPLICATION.Implementations
                 _logger.LogError($"Eroare GetFavorites la {DateTime.Now}", ex.Message.ToString(), _shareService.GetUsername(), _shareService.GetValue());
                 response.IsSuccess = false;
                 response.Message = ex.Message;
+                await _logRepository.LogException("", ex, _shareService.GetUsername(), _shareService.GetValue(), "GetFavorites");
                 return response;
             }
-
+            await _logRepository.LogSuccess("", response, _shareService.GetUsername(), _shareService.GetValue(), "GetFavorites");
             return response;
         }
 
@@ -204,9 +218,10 @@ namespace eComm.APPLICATION.Implementations
                 _logger.LogError($"Eroare GetFavoriteProduct la {DateTime.Now}", ex.Message.ToString(), _shareService.GetUsername(), _shareService.GetValue());
                 response.IsSuccess = false;
                 response.Message = ex.Message;
+                await _logRepository.LogException("", ex, _shareService.GetUsername(), _shareService.GetValue(), "GetFavoriteProductsInformation");
                 return response;
             }
-
+            await _logRepository.LogSuccess("", response, _shareService.GetUsername(), _shareService.GetValue(), "GetFavoriteProductsInformation");
             return response;
         }
 
@@ -239,9 +254,10 @@ namespace eComm.APPLICATION.Implementations
                 _logger.LogError($"Eroare RateProduct la {DateTime.Now}", ex.Message.ToString(), _shareService.GetUsername(), _shareService.GetValue());
                 response.IsSuccess = false;
                 response.Message = ex.Message;
+                await _logRepository.LogException(request, ex, _shareService.GetUsername(), _shareService.GetValue(), "RateProduct");
                 return response;
             }
-
+            await _logRepository.LogSuccess(request, response, _shareService.GetUsername(), _shareService.GetValue(), "RateProduct");
             return response;
         }
     }
