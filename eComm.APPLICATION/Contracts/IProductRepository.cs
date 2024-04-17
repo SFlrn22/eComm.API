@@ -15,6 +15,6 @@ namespace eComm.PERSISTENCE.Contracts
         Task<List<string>> GetFavoriteProducts(string username);
         Task<Product> GetProductByUrlM(string urlM);
         Task<string> InsertRating(RateProductRequest request, string userId);
-
+        Task UpdateProductDetails(string isbn, int price, string description, string category);
     }
 }

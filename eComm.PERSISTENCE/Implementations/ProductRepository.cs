@@ -21,6 +21,7 @@ namespace eComm.PERSISTENCE.Implementations
         private readonly string GET_FAVORITES_BY_USER = "usp_GetFavoritesByUser";
         private readonly string GET_PRODUCT_BY_URLM = "usp_GetProductByUrlM";
         private readonly string INSERT_RATING = "usp_InsertRating";
+        private readonly string UPDATE_PRODUCT_DETAILS = "usp_UpdateDetails";
         public ProductRepository(IDatabaseConnectionFactory connectionFactory)
         {
             _connectionFactory = connectionFactory;
@@ -168,6 +169,21 @@ namespace eComm.PERSISTENCE.Implementations
                 var result = parameters.Get<string>("result");
 
                 return result.ToUpper() ?? "";
+            }
+        }
+
+        public async Task UpdateProductDetails(string isbn, int price, string description, string category)
+        {
+            using (var connection = _connectionFactory.CreateConnection())
+            {
+                var parameters = new DynamicParameters();
+
+                parameters.Add("isbn", isbn, dbType: DbType.String);
+                parameters.Add("price", price, dbType: DbType.Int32);
+                parameters.Add("description", description, dbType: DbType.String);
+                parameters.Add("category", category, dbType: DbType.String);
+
+                await connection.ExecuteAsync(UPDATE_PRODUCT_DETAILS, parameters, commandType: CommandType.StoredProcedure);
             }
         }
     }

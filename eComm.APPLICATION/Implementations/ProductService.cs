@@ -108,6 +108,8 @@ namespace eComm.APPLICATION.Implementations
                     product.Price = Convert.ToInt32(prices[0]);
                     product.Description = data.Description;
                     product.Category = data.Category;
+                    await _productRepository.UpdateProductDetails(product.ISBN, product.Price, product.Description, product.Category);
+                    paginationResult.ProductList[0] = product;
                 }
                 response.Data = paginationResult;
             }
