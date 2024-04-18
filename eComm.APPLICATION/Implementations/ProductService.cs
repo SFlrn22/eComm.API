@@ -105,7 +105,10 @@ namespace eComm.APPLICATION.Implementations
                     var product = paginationResult.ProductList[0];
                     var prices = _scrapperService.GetPriceFromAmazon(product.ISBN);
                     ScrappedData data = await _scrapperService.GetCatAndDesc(product.ISBN);
-                    product.Price = Convert.ToInt32(prices[0]);
+                    if (prices.Count > 0)
+                    {
+                        product.Price = Convert.ToInt32(prices[0]);
+                    }
                     product.Description = data.Description;
                     product.Category = data.Category;
                     await _productRepository.UpdateProductDetails(product.ISBN, product.Price, product.Description, product.Category);

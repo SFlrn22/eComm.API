@@ -28,6 +28,10 @@ namespace eComm.APPLICATION.Implementations
             try
             {
                 List<string> titleList = await _externalRepository.GetRecommendedItemsForId(id, type);
+                if (titleList is null)
+                {
+                    return new List<ProductDTO>();
+                }
                 List<ProductDTO> products = await _productRepository.GetProductsByIsbnList(titleList);
                 await _logRepository.LogSuccess(new { id, type }, products, _shareService.GetUsername(), _shareService.GetValue(), $"{type}based");
                 return products;

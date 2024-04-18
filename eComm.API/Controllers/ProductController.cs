@@ -86,5 +86,19 @@ namespace eComm.API.Controllers
             var result = await _externalDepRepository.GetProductFromImage(file);
             return Ok(result);
         }
+
+        [Authorize]
+        [HttpPost("/api/GetImageFromProductTitle")]
+        public async Task<IActionResult> GetImageFromText(ImageFromTextRequest request)
+        {
+            var result = await _externalDepRepository.GetImageFromText(request.Title);
+
+            TextToImageResponse response = new TextToImageResponse()
+            {
+                Result = result
+            };
+
+            return Ok(response);
+        }
     }
 }

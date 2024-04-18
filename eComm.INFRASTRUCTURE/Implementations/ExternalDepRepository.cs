@@ -18,6 +18,18 @@ namespace eComm.INFRASTRUCTURE.Implementations
             _productRepository = productRepository;
         }
 
+        public async Task<string> GetImageFromText(string title)
+        {
+            HttpResponseMessage response = await _httpClient.GetAsync($"/TextToImage/?title={title}");
+
+            response.EnsureSuccessStatusCode();
+
+            string content = await response.Content.ReadAsStringAsync();
+            string base64Image = JsonConvert.DeserializeObject<string>(content)!;
+
+            return base64Image.Trim();
+        }
+
         public async Task<ProductDTO> GetProductFromImage(IFormFile file)
         {
             var fileContent = new StreamContent(file.OpenReadStream());
