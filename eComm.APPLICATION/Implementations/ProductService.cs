@@ -109,6 +109,10 @@ namespace eComm.APPLICATION.Implementations
                     {
                         product.Price = Convert.ToInt32(prices[0]);
                     }
+                    else
+                    {
+                        product.Price = 10;
+                    }
                     product.Description = data.Description;
                     product.Category = data.Category;
                     await _productRepository.UpdateProductDetails(product.ISBN, product.Price, product.Description, product.Category);
