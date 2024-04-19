@@ -72,7 +72,7 @@ namespace eComm.API.Controllers
         public async Task<IActionResult> GetProductByVoice()
         {
             var form = await Request.ReadFormAsync();
-            var file = form.Files.First();
+            var file = form.Files[0];
             var result = await _externalDepRepository.GetProductFromVoiceRecord(file);
             return Ok(result);
         }
@@ -82,7 +82,7 @@ namespace eComm.API.Controllers
         public async Task<IActionResult> GetProductByImage()
         {
             var form = await Request.ReadFormAsync();
-            var file = form.Files.First();
+            var file = form.Files[0];
             var result = await _externalDepRepository.GetProductFromImage(file);
             return Ok(result);
         }

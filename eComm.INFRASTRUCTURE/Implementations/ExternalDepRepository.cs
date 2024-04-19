@@ -43,7 +43,14 @@ namespace eComm.INFRASTRUCTURE.Implementations
             string content = await response.Content.ReadAsStringAsync();
             string url = JsonConvert.DeserializeObject<string>(content)!;
 
+            if (url.Contains("L"))
+            {
+                url = url.Replace("L", "M");
+            }
+
             Product product = await _productRepository.GetProductByUrlM(url);
+
+            //TODO: Adauga rating in procedura
 
             return product.MapProductToDTO();
         }

@@ -53,7 +53,8 @@ namespace eComm.DOMAIN.Utilities
                 Author = product.Author,
                 Publisher = product.Publisher,
                 PublicationYear = product.PublicationYear,
-                ImageUrlL = product.ImageUrlL
+                ImageUrlL = product.ImageUrlL,
+                AverageRating = product.AverageRating,
             };
         }
 
