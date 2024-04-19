@@ -100,14 +100,21 @@ namespace eComm.APPLICATION.Implementations
             try
             {
                 ProductPaginationResultDTO paginationResult = await _productRepository.GetProducts(request.PageNumber, request.ItemsPerPage, request.SortingColumn, request.SortingType, request.FilterColumn, request.FilterValue);
-                if (request.FilterColumn == "ISBN" && string.IsNullOrEmpty(paginationResult.ProductList[0].Description))
+                if (request.FilterColumn == "ISBN" && string.IsNullOrEmpty(paginationResult.ProductList[0].Description) && paginationResult.ProductList[0].Price == 0)
                 {
                     var product = paginationResult.ProductList[0];
                     var prices = _scrapperService.GetPriceFromAmazon(product.ISBN);
                     ScrappedData data = await _scrapperService.GetCatAndDesc(product.ISBN);
                     if (prices.Count > 0)
                     {
-                        product.Price = Convert.ToInt32(prices[0]);
+                        foreach (var price in prices)
+                        {
+                            if (price != 0)
+                            {
+                                product.Price = Convert.ToInt32(price);
+                                break;
+                            }
+                        }
                     }
                     else
                     {

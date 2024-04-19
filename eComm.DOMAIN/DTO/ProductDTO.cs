@@ -10,5 +10,6 @@
         public string PublicationYear { get; set; } = string.Empty;
         public string ImageUrlL { get; set; } = string.Empty;
         public int AverageRating { get; set; }
+        public int Price { get; set; }
     }
 }
