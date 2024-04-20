@@ -83,7 +83,18 @@ namespace eComm.INFRASTRUCTURE.Implementations
             else if (stripeEvent.Type == Events.ChargeUpdated)
             {
                 var charge = stripeEvent.Data.Object as Charge;
-                await _emailService.SendEmailAsync($"Receipt for transaction: {charge?.Id}", $"{charge?.ReceiptUrl}", $"{charge?.BillingDetails.Email}");
+                using (HttpClient client = new HttpClient())
+                {
+                    using (HttpResponseMessage response = await client.GetAsync(charge!.ReceiptUrl))
+                    {
+                        response.EnsureSuccessStatusCode();
+                        using (MemoryStream stream = new MemoryStream())
+                        {
+                            await response.Content.CopyToAsync(stream);
+                            await _emailService.SendEmailAsync($"Receipt for transaction: {charge?.Id}", $"{charge?.ReceiptUrl}", $"{charge?.BillingDetails.Email}", stream.ToArray());
+                        }
+                    }
+                }
             }
             else
             {

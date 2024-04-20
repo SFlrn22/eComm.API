@@ -1,5 +1,7 @@
 ﻿using eComm.DOMAIN.DTO;
 using eComm.DOMAIN.Models;
+using iText.Html2pdf;
+using iText.Kernel.Pdf;
 using Stripe.Checkout;
 using System.Data;
 
@@ -83,6 +85,18 @@ namespace eComm.DOMAIN.Utilities
             }
 
             return lineItems;
+        }
+
+        public static byte[] ConvertToPdf(this byte[] htmlByteArr)
+        {
+            using (var memoryStream = new MemoryStream())
+            {
+                PdfWriter writer = new PdfWriter(memoryStream);
+                PdfDocument pdf = new PdfDocument(writer);
+                var document = HtmlConverter.ConvertToDocument(new MemoryStream(htmlByteArr), pdf, new ConverterProperties());
+                document.Close();
+                return memoryStream.ToArray();
+            }
         }
     }
 }

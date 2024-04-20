@@ -20,7 +20,7 @@ namespace eComm.INFRASTRUCTURE.Implementations
             PASSWORD = AesDecryptHelper.Decrypt(_appSettings.SmtpConfiguration.Password, AesKeyConfiguration.Key, AesKeyConfiguration.IV);
             CLIENT = _appSettings.SmtpConfiguration.Client;
         }
-        public async Task SendEmailAsync(string subject, string body, string destination)
+        public async Task SendEmailAsync(string subject, string body, string destination, byte[] pdf)
         {
             MailMessage message = new MailMessage()
             {
@@ -29,6 +29,9 @@ namespace eComm.INFRASTRUCTURE.Implementations
                 Body = body,
                 IsBodyHtml = false,
             };
+
+            Attachment attachment = new Attachment(new MemoryStream(pdf.ConvertToPdf()), "Receipt.pdf");
+            message.Attachments.Add(attachment);
 
             message.To.Add(new MailAddress(destination));
 
@@ -40,6 +43,8 @@ namespace eComm.INFRASTRUCTURE.Implementations
             };
 
             await smtpClient.SendMailAsync(message);
+
+            attachment.Dispose();
         }
     }
 }
