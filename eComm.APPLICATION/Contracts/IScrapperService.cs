@@ -1,4 +1,5 @@
 ﻿using eComm.DOMAIN.Models;
+using Microsoft.AspNetCore.Http;
 
 namespace eComm.APPLICATION.Contracts
 {
@@ -6,5 +7,6 @@ namespace eComm.APPLICATION.Contracts
     {
         List<double> GetPriceFromAmazon(string isbn);
         Task<ScrappedData> GetCatAndDesc(string isbn);
+        Task<string> GetImageSource(IFormFile file);
     }
 }

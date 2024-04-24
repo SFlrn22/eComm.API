@@ -1,6 +1,8 @@
 ﻿using eComm.APPLICATION.Contracts;
 using eComm.DOMAIN.Models;
 using HtmlAgilityPack;
+using Microsoft.AspNetCore.Http;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace eComm.APPLICATION.Implementations
@@ -69,6 +71,33 @@ namespace eComm.APPLICATION.Implementations
                 return prices;
             }
             return prices;
+        }
+
+        public async Task<string> GetImageSource(IFormFile file)
+        {
+            string url = $"https://lens.google.com/uploadbyurl?url=http://images.amazon.com/images/P/0195153448.01.LZZZZZZZ.jpg&hl=en";
+
+            var fileContent = new StreamContent(file.OpenReadStream());
+
+            var contentToUpload = new MultipartFormDataContent();
+
+            using (HttpClient client = new HttpClient())
+            {
+                using (var requestMessage = new HttpRequestMessage(HttpMethod.Get, url))
+                {
+                    requestMessage.Headers.Add("User-agent", "Mozilla/5.0 (X11; Linux x86_64; rv:103.0) Gecko/20100101 Firefox/103.0");
+                    var result = await client.SendAsync(requestMessage);
+                    string contentRes = await result.Content.ReadAsStringAsync();
+                }
+
+                HttpResponseMessage response = await client.PostAsync(url, contentToUpload);
+                response.EnsureSuccessStatusCode();
+                string content = await response.Content.ReadAsStringAsync();
+                string resp = JsonConvert.DeserializeObject<string>(content)!;
+            }
+
+            return "";
+
         }
     }
 }

@@ -31,5 +31,14 @@ namespace eComm.API.Controllers
 
             return Ok(result);
         }
+        [Authorize]
+        [HttpPost("/api/GetImageSource")]
+        public async Task<IActionResult> GetImageSource()
+        {
+            var form = await Request.ReadFormAsync();
+            var file = form.Files[0];
+            var result = await _scrapperService.GetImageSource(file);
+            return Ok(result);
+        }
     }
 }
