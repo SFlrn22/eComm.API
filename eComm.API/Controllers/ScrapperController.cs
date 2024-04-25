@@ -31,7 +31,7 @@ namespace eComm.API.Controllers
 
             return Ok(result);
         }
-        [Authorize]
+        [AllowAnonymous]
         [HttpPost("/api/GetImageSource")]
         public async Task<IActionResult> GetImageSource()
         {
