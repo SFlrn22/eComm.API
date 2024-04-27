@@ -1,7 +1,7 @@
-﻿using eComm.DOMAIN.DTO;
+﻿using eComm.APPLICATION.Contracts;
+using eComm.DOMAIN.DTO;
 using eComm.DOMAIN.Models;
 using eComm.DOMAIN.Utilities;
-using eComm.INFRASTRUCTURE.Contracts;
 using eComm.PERSISTENCE.Contracts;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;

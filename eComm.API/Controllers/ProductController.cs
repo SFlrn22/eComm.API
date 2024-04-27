@@ -3,7 +3,6 @@ using eComm.DOMAIN.DTO;
 using eComm.DOMAIN.Models;
 using eComm.DOMAIN.Requests;
 using eComm.DOMAIN.Responses;
-using eComm.INFRASTRUCTURE.Contracts;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
