@@ -7,6 +7,6 @@ namespace eComm.APPLICATION.Contracts
     {
         List<double> GetPriceFromAmazon(string isbn);
         Task<ScrappedData> GetCatAndDesc(string isbn);
-        Task<string> GetImageSource(IFormFile file);
+        Task<List<ReverseImageResult>> GetImageSource(IFormFile file);
     }
 }

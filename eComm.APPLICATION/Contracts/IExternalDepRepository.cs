@@ -1,7 +1,7 @@
 ﻿using eComm.DOMAIN.DTO;
 using Microsoft.AspNetCore.Http;
 
-namespace eComm.INFRASTRUCTURE.Contracts
+namespace eComm.APPLICATION.Contracts
 {
     public interface IExternalDepRepository
     {
