@@ -1,6 +1,5 @@
 ﻿using eComm.APPLICATION.Contracts;
 using eComm.DOMAIN.DTO;
-using eComm.INFRASTRUCTURE.Contracts;
 using eComm.PERSISTENCE.Contracts;
 using Microsoft.Extensions.Logging;
 
