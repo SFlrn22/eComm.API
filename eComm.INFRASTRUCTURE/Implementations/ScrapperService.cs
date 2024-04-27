@@ -79,13 +79,16 @@ namespace eComm.APPLICATION.Implementations
             return prices;
         }
 
-        public async Task<List<ReverseImageResult>> GetImageSource(IFormFile file)
+        public async Task<ImageSource> GetImageSource(IFormFile file)
         {
             ProductDTO product = await _externalRepository.GetProductFromImage(file);
 
+            ImageSource source = new ImageSource();
+            source.ImageUrl = product.ImageUrlL;
+
             string url = $"https://lens.google.com/uploadbyurl?url={product.ImageUrlL}";
 
-            List<ReverseImageResult> result = new List<ReverseImageResult>();
+            List<ReverseImageResult> searchResults = new List<ReverseImageResult>();
 
             using (HttpClient client = new HttpClient())
             {
@@ -112,6 +115,7 @@ namespace eComm.APPLICATION.Implementations
                     client.DefaultRequestHeaders.Add("upgrade-insecure-requests", "1");
                     client.DefaultRequestHeaders.Add("user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36 OPR/109.0.0.0");
                     client.DefaultRequestHeaders.Add("x-client-data", "CIuOywE=");
+
                     var postResponse = await client.GetAsync(url);
                     var content = await postResponse.Content.ReadAsStringAsync();
 
@@ -133,16 +137,17 @@ namespace eComm.APPLICATION.Implementations
                             Link = item[5].Value,
                             Title = item[6].Value
                         };
-                        result.Add(scrappedItem);
+                        searchResults.Add(scrappedItem);
                     }
+                    source.ResultList = searchResults;
                 }
                 catch (Exception ex)
                 {
-                    return new List<ReverseImageResult>();
+                    return source;
                 }
             }
 
-            return result;
+            return source;
 
         }
     }
