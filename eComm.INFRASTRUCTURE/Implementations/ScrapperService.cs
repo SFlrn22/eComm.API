@@ -90,6 +90,37 @@ namespace eComm.APPLICATION.Implementations
 
             List<ReverseImageResult> searchResults = new List<ReverseImageResult>();
 
+            dynamic data = new object();
+
+            for (int i = 0; i < 5; i++)
+            {
+                data = await GetHtmlObj(url);
+                if (data != null) break;
+            }
+
+            int count = 0;
+
+            foreach (var item in data)
+            {
+                count++;
+                ReverseImageResult scrappedItem = new ReverseImageResult()
+                {
+                    Link = item[5].Value,
+                    Title = item[6].Value
+                };
+                searchResults.Add(scrappedItem);
+
+                if (count == 10)
+                {
+                    break;
+                }
+            }
+            source.ResultList = searchResults;
+            return source;
+        }
+        private async Task<dynamic> GetHtmlObj(string url)
+        {
+            dynamic data;
             using (HttpClient client = new HttpClient())
             {
                 try
@@ -128,27 +159,14 @@ namespace eComm.APPLICATION.Implementations
                     string strippedString = nodeContent.TrimStart("AF_initDataCallback(".ToCharArray()).TrimEnd(");".ToCharArray());
                     dynamic jsonObject = JsonConvert.DeserializeObject(strippedString)!;
 
-                    var data = (((((((((jsonObject.data[1])[0])[1])[8])[8])[0])[12])[0])[9])[0];
-
-                    foreach (var item in data)
-                    {
-                        ReverseImageResult scrappedItem = new ReverseImageResult()
-                        {
-                            Link = item[5].Value,
-                            Title = item[6].Value
-                        };
-                        searchResults.Add(scrappedItem);
-                    }
-                    source.ResultList = searchResults;
+                    data = (((((((((jsonObject.data[1])[0])[1])[8])[8])[0])[12])[0])[9])[0];
+                    return data;
                 }
-                catch (Exception ex)
+                catch
                 {
-                    return source;
+                    return null;
                 }
             }
-
-            return source;
-
         }
     }
 }
