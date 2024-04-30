@@ -74,6 +74,22 @@ namespace eComm.INFRASTRUCTURE.Implementations
             return result;
         }
 
+        public async Task<string> GetTextFromImage(IFormFile file)
+        {
+            var fileContent = new StreamContent(file.OpenReadStream());
+
+            var contentToUpload = new MultipartFormDataContent();
+            contentToUpload.Add(fileContent, "file", file.FileName);
+
+            HttpResponseMessage response = await _httpClient.PostAsync($"/ImageToText", contentToUpload);
+
+            response.EnsureSuccessStatusCode();
+            string content = await response.Content.ReadAsStringAsync();
+            string result = JsonConvert.DeserializeObject<string>(content)!;
+
+            return result;
+        }
+
         public async Task<List<string>> GetTopTen()
         {
             HttpResponseMessage response = await _httpClient.GetAsync("/GetTopTen");

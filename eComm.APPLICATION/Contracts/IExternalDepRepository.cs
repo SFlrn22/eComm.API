@@ -10,5 +10,6 @@ namespace eComm.APPLICATION.Contracts
         Task<List<ProductDTO>> GetProductFromVoiceRecord(IFormFile file);
         Task<ProductDTO> GetProductFromImage(IFormFile file);
         Task<string> GetImageFromText(string title);
+        Task<string> GetTextFromImage(IFormFile file);
     }
 }
