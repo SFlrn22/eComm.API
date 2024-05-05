@@ -6,6 +6,7 @@ using eComm.DOMAIN.Requests;
 using eComm.DOMAIN.Responses;
 using eComm.DOMAIN.Utilities;
 using eComm.PERSISTENCE.Contracts;
+using eComm.PERSISTENCE.Helpers;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
@@ -52,7 +53,7 @@ namespace eComm.APPLICATION.Implementations
                 response.Message = "Userul nu a fost gasit";
                 return response;
             }
-            if (returnedUser.Password != request.Password)
+            if (returnedUser.Password != EncryptionHelper.Sha256Hash(request.Password))
             {
                 response.IsSuccess = false;
                 response.Message = "Username sau parola gresita";
@@ -110,6 +111,7 @@ namespace eComm.APPLICATION.Implementations
 
             try
             {
+                request.Password = EncryptionHelper.Sha256Hash(request.Password);
                 resp = await _userRepository.CreateUser(request);
             }
             catch (Exception ex)

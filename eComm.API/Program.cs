@@ -30,7 +30,7 @@ var columnOptions = new ColumnOptions
 };
 
 var logger = new LoggerConfiguration().WriteTo
-    .MSSqlServer(AesDecryptHelper.Decrypt(config.GetSection("ConnectionStrings:DefaultConnection").Value!, AesKeyConfiguration.Key, AesKeyConfiguration.IV),
+    .MSSqlServer(EncryptionHelper.Decrypt(config.GetSection("ConnectionStrings:DefaultConnection").Value!, AesKeyConfiguration.Key, AesKeyConfiguration.IV),
         new MSSqlServerSinkOptions
         {
             TableName = "Logs",

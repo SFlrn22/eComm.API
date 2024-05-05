@@ -19,7 +19,7 @@ namespace eComm.INFRASTRUCTURE.Implementations
         public PaymentService(IOptions<AppSettings> appSettings, ICartRepository cartRepository, IShareService shareService, IEmailService emailService)
         {
             _appSettings = appSettings.Value;
-            API_KEY = AesDecryptHelper.Decrypt(_appSettings.StripeConfiguration.Key, AesKeyConfiguration.Key, AesKeyConfiguration.IV);
+            API_KEY = EncryptionHelper.Decrypt(_appSettings.StripeConfiguration.Key, AesKeyConfiguration.Key, AesKeyConfiguration.IV);
             _cartRepository = cartRepository;
             _shareService = shareService;
             _emailService = emailService;

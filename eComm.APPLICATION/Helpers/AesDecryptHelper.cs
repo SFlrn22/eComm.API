@@ -1,8 +1,9 @@
 ﻿using System.Security.Cryptography;
+using System.Text;
 
 namespace eComm.PERSISTENCE.Helpers
 {
-    public class AesDecryptHelper
+    public class EncryptionHelper
     {
         public static string Decrypt(string cipheredtext, byte[] key, byte[] iv)
         {
@@ -23,6 +24,15 @@ namespace eComm.PERSISTENCE.Helpers
                 }
             }
             return simpletext;
+        }
+        public static string Sha256Hash(string text)
+        {
+            byte[] hash;
+            using (SHA256 sha256Hash = SHA256.Create())
+            {
+                hash = sha256Hash.ComputeHash(Encoding.UTF8.GetBytes(text));
+            }
+            return Convert.ToBase64String(hash);
         }
     }
 }

@@ -17,7 +17,7 @@ namespace eComm.INFRASTRUCTURE.Implementations
         {
             _appSettings = appSettings.Value;
             FROM_EMAIL = _appSettings.SmtpConfiguration.Address;
-            PASSWORD = AesDecryptHelper.Decrypt(_appSettings.SmtpConfiguration.Password, AesKeyConfiguration.Key, AesKeyConfiguration.IV);
+            PASSWORD = EncryptionHelper.Decrypt(_appSettings.SmtpConfiguration.Password, AesKeyConfiguration.Key, AesKeyConfiguration.IV);
             CLIENT = _appSettings.SmtpConfiguration.Client;
         }
         public async Task SendEmailAsync(string subject, string body, string destination, byte[] pdf)

@@ -17,7 +17,7 @@ namespace eComm.PERSISTENCE.Implementations
         }
         public SqlConnection CreateConnection()
         {
-            string decipheredConnectionString = AesDecryptHelper.Decrypt(_connectionString, AesKeyConfiguration.Key, AesKeyConfiguration.IV);
+            string decipheredConnectionString = EncryptionHelper.Decrypt(_connectionString, AesKeyConfiguration.Key, AesKeyConfiguration.IV);
             return new SqlConnection(decipheredConnectionString);
         }
     }

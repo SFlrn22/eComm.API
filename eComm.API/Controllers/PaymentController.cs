@@ -55,7 +55,7 @@ namespace eComm.API.Controllers
                 var stripeEvent = EventUtility.ConstructEvent(
                      json,
                      Request.Headers["Stripe-Signature"],
-                     AesDecryptHelper.Decrypt(_appSettings.StripeConfiguration.SecretWH, AesKeyConfiguration.Key, AesKeyConfiguration.IV)
+                     EncryptionHelper.Decrypt(_appSettings.StripeConfiguration.SecretWH, AesKeyConfiguration.Key, AesKeyConfiguration.IV)
                 );
                 _paymentService.ParseWebHookJSON(stripeEvent);
                 return Ok();
