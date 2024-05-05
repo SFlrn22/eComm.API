@@ -6,6 +6,7 @@
         public JWTConfig JwtConfiguration { get; set; } = new();
         public StripeConfig StripeConfiguration { get; set; } = new();
         public SmtpConfig SmtpConfiguration { get; set; } = new();
+        public WrapperConfig WrapperConfigUration { get; set; } = new();
     }
 
     public partial class JWTConfig
@@ -25,5 +26,10 @@
         public string Address { get; set; } = string.Empty;
         public string Password { get; set; } = string.Empty;
         public string Client { get; set; } = string.Empty;
+    }
+    public partial class WrapperConfig
+    {
+        public string Username { get; set; } = string.Empty;
+        public string Password { get; set; } = string.Empty;
     }
 }

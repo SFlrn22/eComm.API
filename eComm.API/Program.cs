@@ -53,7 +53,7 @@ builder.Logging.AddSerilog(logger);
 
 builder.Services.AddPersistenceServices();
 builder.Services.AddApplicationServices();
-builder.Services.AddInfrastructureServices();
+builder.Services.AddInfrastructureServices(config);
 
 var origins = builder.Configuration.GetSection("CorsOrigins").GetChildren().Select(x => x.Value).ToArray();
 

@@ -12,10 +12,12 @@ namespace eComm.INFRASTRUCTURE.Implementations
     {
         private readonly HttpClient _httpClient;
         private readonly IProductRepository _productRepository;
-        public ExternalDepRepository(IProductRepository productRepository)
+        private readonly IHttpClientFactory _httpClientFactory;
+        public ExternalDepRepository(IProductRepository productRepository, IHttpClientFactory httpClientFactory)
         {
-            _httpClient = new HttpClient() { BaseAddress = new Uri("http://127.0.0.1:8000") };
             _productRepository = productRepository;
+            _httpClientFactory = httpClientFactory;
+            _httpClient = _httpClientFactory.CreateClient("Wrapper");
         }
 
         public async Task<string> GetImageFromText(string title)
