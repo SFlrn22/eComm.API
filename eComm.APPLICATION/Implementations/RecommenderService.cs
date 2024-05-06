@@ -1,5 +1,6 @@
 ﻿using eComm.APPLICATION.Contracts;
 using eComm.DOMAIN.DTO;
+using eComm.DOMAIN.Models;
 using eComm.PERSISTENCE.Contracts;
 using Microsoft.Extensions.Logging;
 
@@ -21,17 +22,65 @@ namespace eComm.APPLICATION.Implementations
             _shareService = shareService;
         }
 
-        public async Task<List<ProductDTO>> GetRecommendedItems(string id, string type)
+        public async Task<List<AssociationRule>> GetAssociationRules(string title)
         {
-            _logger.LogInformation($"GetTopTen request la data {DateTime.Now}");
+            _logger.LogInformation($"GetAssociationRules request la data {DateTime.Now}");
             try
             {
-                List<string> titleList = await _externalRepository.GetRecommendedItemsForId(id, type);
-                if (titleList is null)
+                List<AssociationRule> rules = new List<AssociationRule>();
+
+                string isbn = await _productRepository.GetIsbnByTitle(title);
+
+                List<string> isbnList = await _externalRepository.GetRecommendedItemsForId(isbn, "content");
+
+                foreach (string recommendation in isbnList)
+                {
+                    List<string> secondRecommendations = await _externalRepository.GetRecommendedItemsForId(isbn, "content");
+                    var intersection = isbnList.Intersect(secondRecommendations).ToList();
+
+                    if (intersection.Count != 0)
+                    {
+                        var recommendationInfo = await _productRepository.GetProductDetailsByIsbn(recommendation);
+
+                        var productLists = await _productRepository.GetProductsByIsbnList(intersection);
+
+                        foreach (var product in productLists)
+                        {
+                            if (product.ISBN != isbn)
+                            {
+                                rules.Add(new AssociationRule
+                                {
+                                    Title = recommendationInfo.Title,
+                                    ImageURL = recommendationInfo.ImageUrlL,
+                                    AssociatedTitle = product.Title,
+                                    AssociatedImageURL = product.ImageUrlL
+                                });
+                            }
+                        }
+                    }
+                }
+
+                return rules;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogInformation($"Eroare GetAssociationRules request la data {DateTime.Now}", ex.Message.ToString());
+                await _logRepository.LogException(title, ex, _shareService.GetUsername(), _shareService.GetValue(), $"GetAssociationRules");
+                throw;
+            }
+        }
+
+        public async Task<List<ProductDTO>> GetRecommendedItems(string id, string type)
+        {
+            _logger.LogInformation($"GetRecommendedItems request la data {DateTime.Now}");
+            try
+            {
+                List<string> isbnList = await _externalRepository.GetRecommendedItemsForId(id, type);
+                if (isbnList is null)
                 {
                     return new List<ProductDTO>();
                 }
-                List<ProductDTO> products = await _productRepository.GetProductsByIsbnList(titleList);
+                List<ProductDTO> products = await _productRepository.GetProductsByIsbnList(isbnList);
                 await _logRepository.LogSuccess(new { id, type }, products, _shareService.GetUsername(), _shareService.GetValue(), $"{type}based");
                 return products;
             }

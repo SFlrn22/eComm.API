@@ -17,11 +17,14 @@ namespace eComm.PERSISTENCE.Implementations
         private readonly string GET_PRODUCTS_BY_ISBN_LIST = "usp_GetProductsFromIsbnList";
         private readonly string GET_PRODUCTS_BY_TITLE_LIST = "usp_GetProductsFromTitleList";
         private readonly string GET_PRODUCTS_BY_NAME = "usp_GetProductsByName";
+        private readonly string GET_ISBN_BY_TITLE = "usp_GetIsbnByTitle";
         private readonly string ADD_OR_REMOVE_FAVORITE = "usp_AddOrRemoveFavorites";
         private readonly string GET_FAVORITES_BY_USER = "usp_GetFavoritesByUser";
         private readonly string GET_PRODUCT_BY_URLM = "usp_GetProductByUrlM";
         private readonly string INSERT_RATING = "usp_InsertRating";
         private readonly string UPDATE_PRODUCT_DETAILS = "usp_UpdateDetails";
+        private readonly string GET_PRODUCT_DETAILS_BY_ISBN = "usp_GetProductByIsbn";
+
         public ProductRepository(IDatabaseConnectionFactory connectionFactory)
         {
             _connectionFactory = connectionFactory;
@@ -184,6 +187,34 @@ namespace eComm.PERSISTENCE.Implementations
                 parameters.Add("category", category, dbType: DbType.String);
 
                 await connection.ExecuteAsync(UPDATE_PRODUCT_DETAILS, parameters, commandType: CommandType.StoredProcedure);
+            }
+        }
+
+        public async Task<string> GetIsbnByTitle(string title)
+        {
+            using (var connection = _connectionFactory.CreateConnection())
+            {
+                var parameters = new DynamicParameters();
+
+                parameters.Add("title", title, dbType: DbType.String);
+
+                string isbn = await connection.QueryFirstAsync(GET_ISBN_BY_TITLE, parameters, commandType: CommandType.StoredProcedure);
+
+                return isbn;
+            }
+        }
+
+        public async Task<ProductDetailsDTO> GetProductDetailsByIsbn(string isbn)
+        {
+            using (var connection = _connectionFactory.CreateConnection())
+            {
+                var parameters = new DynamicParameters();
+
+                parameters.Add("isbn", isbn, dbType: DbType.String);
+
+                ProductDetailsDTO details = await connection.QueryFirstAsync(GET_PRODUCT_DETAILS_BY_ISBN, parameters, commandType: CommandType.StoredProcedure);
+
+                return details;
             }
         }
     }

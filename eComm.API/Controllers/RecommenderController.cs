@@ -1,5 +1,6 @@
 ﻿using eComm.APPLICATION.Contracts;
 using eComm.DOMAIN.DTO;
+using eComm.DOMAIN.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -36,6 +37,13 @@ namespace eComm.API.Controllers
         public async Task<IActionResult> GetContentBasedRecommendations([FromQuery] string isbn)
         {
             List<ProductDTO> result = await _recommenderService.GetRecommendedItems(isbn, "content");
+            return Ok(result);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAsoociationRules([FromQuery] string title)
+        {
+            List<AssociationRule> result = await _recommenderService.GetAssociationRules(title);
             return Ok(result);
         }
     }

@@ -16,5 +16,7 @@ namespace eComm.PERSISTENCE.Contracts
         Task<Product> GetProductByUrlM(string urlM);
         Task<string> InsertRating(RateProductRequest request, string userId);
         Task UpdateProductDetails(string isbn, int price, string description, string category);
+        Task<string> GetIsbnByTitle(string title);
+        Task<ProductDetailsDTO> GetProductDetailsByIsbn(string isbn);
     }
 }
