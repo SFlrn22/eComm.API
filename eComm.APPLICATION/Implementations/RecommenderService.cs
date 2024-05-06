@@ -31,11 +31,11 @@ namespace eComm.APPLICATION.Implementations
 
                 string isbn = await _productRepository.GetIsbnByTitle(title);
 
-                List<string> isbnList = await _externalRepository.GetRecommendedItemsForId(isbn, "content");
+                List<string> isbnList = await _externalRepository.GetRecommendedItemsForId(isbn, "item");
 
                 foreach (string recommendation in isbnList)
                 {
-                    List<string> secondRecommendations = await _externalRepository.GetRecommendedItemsForId(isbn, "content");
+                    List<string> secondRecommendations = await _externalRepository.GetRecommendedItemsForId(recommendation, "item");
                     var intersection = isbnList.Intersect(secondRecommendations).ToList();
 
                     if (intersection.Count != 0)
@@ -46,7 +46,7 @@ namespace eComm.APPLICATION.Implementations
 
                         foreach (var product in productLists)
                         {
-                            if (product.ISBN != isbn)
+                            if (product.ISBN != isbn && !rules.Select(t => t.AssociatedTitle).Contains(product.Title))
                             {
                                 rules.Add(new AssociationRule
                                 {

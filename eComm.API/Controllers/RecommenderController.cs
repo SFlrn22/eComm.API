@@ -40,7 +40,7 @@ namespace eComm.API.Controllers
             return Ok(result);
         }
 
-        [HttpGet]
+        [HttpGet("AssociationRules")]
         public async Task<IActionResult> GetAsoociationRules([FromQuery] string title)
         {
             List<AssociationRule> result = await _recommenderService.GetAssociationRules(title);

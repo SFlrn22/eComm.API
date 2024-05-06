@@ -198,7 +198,7 @@ namespace eComm.PERSISTENCE.Implementations
 
                 parameters.Add("title", title, dbType: DbType.String);
 
-                string isbn = await connection.QueryFirstAsync(GET_ISBN_BY_TITLE, parameters, commandType: CommandType.StoredProcedure);
+                string isbn = await connection.QueryFirstAsync<string>(GET_ISBN_BY_TITLE, parameters, commandType: CommandType.StoredProcedure);
 
                 return isbn;
             }
@@ -212,7 +212,7 @@ namespace eComm.PERSISTENCE.Implementations
 
                 parameters.Add("isbn", isbn, dbType: DbType.String);
 
-                ProductDetailsDTO details = await connection.QueryFirstAsync(GET_PRODUCT_DETAILS_BY_ISBN, parameters, commandType: CommandType.StoredProcedure);
+                ProductDetailsDTO details = await connection.QueryFirstAsync<ProductDetailsDTO>(GET_PRODUCT_DETAILS_BY_ISBN, parameters, commandType: CommandType.StoredProcedure);
 
                 return details;
             }
