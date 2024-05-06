@@ -9,6 +9,7 @@ using eComm.PERSISTENCE.Contracts;
 using eComm.PERSISTENCE.Helpers;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using System.Security.Claims;
 
 namespace eComm.APPLICATION.Implementations
 {
@@ -61,11 +62,63 @@ namespace eComm.APPLICATION.Implementations
             }
 
             string token = _authHelper.Generate(returnedUser);
+            string refreshToken = _authHelper.GenerateRefreshToken();
+            string hashedToken = EncryptionHelper.Sha256Hash(refreshToken);
+            await _userRepository.UpdateRefreshExpireDate(DateTime.Now.AddHours(7), request.Username, hashedToken);
             resp.User = returnedUser.ToUserDTO();
             resp.Token = token;
+            resp.RefreshToken = refreshToken;
             response.Data = resp;
 
             return response;
+        }
+
+        public async Task<BaseResponse<AuthResponse>> Refresh(TokenModel request)
+        {
+            _logger.LogCritical($"RefreshToken request at {DateTime.Now}");
+
+            BaseResponse<AuthResponse> response = new()
+            {
+                IsSuccess = true,
+                Message = "Refresh successful"
+            };
+
+            var claims = _authHelper.GetPrincipalFromExpiredToken(request.Token);
+            var username = claims.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)!.Value!;
+
+
+            AuthResponse authResponse = new AuthResponse();
+
+            try
+            {
+                var returnedUser = await _userRepository.GetUser(username);
+
+                var hashedToken = EncryptionHelper.Sha256Hash(request.RefreshToken);
+
+                if (returnedUser is null || returnedUser.RefreshExpireDate < DateTime.Now || hashedToken != returnedUser.RefreshToken)
+                {
+                    response.IsSuccess = false;
+                    response.Message = "Unauthorized";
+                    return response;
+                }
+
+                var newToken = _authHelper.Generate(returnedUser);
+
+                authResponse.Token = newToken;
+                authResponse.RefreshToken = request.RefreshToken;
+
+                response.Data = authResponse;
+
+                return response;
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Eroare Refresh la {DateTime.Now}", ex.Message.ToString());
+                response.IsSuccess = false;
+                response.Message = "Exception";
+                return response;
+            }
         }
 
         public async Task<BaseResponse<string>> Register(UserCreateRequest request)

@@ -1,4 +1,5 @@
 ﻿using eComm.APPLICATION.Contracts;
+using eComm.DOMAIN.Models;
 using eComm.DOMAIN.Requests;
 using eComm.DOMAIN.Responses;
 using Microsoft.AspNetCore.Authorization;
@@ -44,6 +45,18 @@ namespace eComm.API.Controllers
             {
                 return BadRequest(response);
             }
+
+            return Ok(response);
+        }
+
+        [AllowAnonymous]
+        [HttpPost("/api/Refresh")]
+        public async Task<IActionResult> RefreshToken([FromBody] TokenModel request)
+        {
+            if (request == null)
+                return BadRequest();
+
+            var response = await _loginService.Refresh(request);
 
             return Ok(response);
         }

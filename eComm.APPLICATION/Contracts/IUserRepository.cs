@@ -7,5 +7,6 @@ namespace eComm.PERSISTENCE.Contracts
     {
         Task<User> GetUser(string username);
         Task<int> CreateUser(UserCreateRequest request);
+        Task UpdateRefreshExpireDate(DateTime refreshExpireDate, string username, string refreshToken);
     }
 }
