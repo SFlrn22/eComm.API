@@ -31,11 +31,17 @@ namespace eComm.APPLICATION.Implementations
 
                 string isbn = await _productRepository.GetIsbnByTitle(title);
 
-                List<string> isbnList = await _externalRepository.GetRecommendedItemsForId(isbn, "item");
+                List<string> isbnList = await _externalRepository.GetRecommendedItemsForId(isbn, "content");
 
-                foreach (string recommendation in isbnList)
+                var options = new ParallelOptions()
                 {
-                    List<string> secondRecommendations = await _externalRepository.GetRecommendedItemsForId(recommendation, "item");
+                    MaxDegreeOfParallelism = 20
+                };
+
+                await Parallel.ForEachAsync(isbnList, options, async (recommendation, ct) =>
+                {
+                    List<string> secondRecommendations = await _externalRepository.GetRecommendedItemsForId(recommendation, "content");
+
                     var intersection = isbnList.Intersect(secondRecommendations).ToList();
 
                     if (intersection.Count != 0)
@@ -58,7 +64,7 @@ namespace eComm.APPLICATION.Implementations
                             }
                         }
                     }
-                }
+                });
 
                 return rules;
             }
