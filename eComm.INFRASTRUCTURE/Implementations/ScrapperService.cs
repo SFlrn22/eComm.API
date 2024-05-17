@@ -106,7 +106,7 @@ namespace eComm.APPLICATION.Implementations
                 ReverseImageResult scrappedItem = new ReverseImageResult()
                 {
                     Link = item[5].Value,
-                    Title = item[6].Value
+                    Title = item[3].Value
                 };
                 searchResults.Add(scrappedItem);
 
@@ -159,7 +159,8 @@ namespace eComm.APPLICATION.Implementations
                     string strippedString = nodeContent.TrimStart("AF_initDataCallback(".ToCharArray()).TrimEnd(");".ToCharArray());
                     dynamic jsonObject = JsonConvert.DeserializeObject(strippedString)!;
 
-                    data = (((((((((jsonObject.data[1])[0])[1])[8])[8])[0])[12])[0])[9])[0];
+                    data = ((((((jsonObject.data[1])[1])[1])[8])[8])[0])[12];
+
                     return data;
                 }
                 catch
