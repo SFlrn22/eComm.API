@@ -33,15 +33,9 @@ namespace eComm.APPLICATION.Implementations
 
                 List<string> isbnList = await _externalRepository.GetRecommendedItemsForId(isbn, "content");
 
-                var options = new ParallelOptions()
-                {
-                    MaxDegreeOfParallelism = 20
-                };
-
-                await Parallel.ForEachAsync(isbnList, options, async (recommendation, ct) =>
+                foreach (string recommendation in isbnList)
                 {
                     List<string> secondRecommendations = await _externalRepository.GetRecommendedItemsForId(recommendation, "content");
-
                     var intersection = isbnList.Intersect(secondRecommendations).ToList();
 
                     if (intersection.Count != 0)
@@ -64,7 +58,7 @@ namespace eComm.APPLICATION.Implementations
                             }
                         }
                     }
-                });
+                }
 
                 return rules;
             }

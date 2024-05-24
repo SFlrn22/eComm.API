@@ -64,13 +64,19 @@ namespace eComm.APPLICATION.Implementations
 
             try
             {
-                var scrappedData = doc.DocumentNode.SelectSingleNode("//div[@id='tmmSwatches']").SelectNodes("//span[@class='slot-price']");
-                foreach (var data in scrappedData)
+                var priceSection = doc.DocumentNode.SelectSingleNode("//div[@id='tmmSwatches']");
+
+                if (priceSection != null)
                 {
-                    string cleanedPrice = data.InnerText.Trim();
-                    double price = Double.Parse(cleanedPrice.Substring(1, cleanedPrice.Length - 1));
-                    prices.Add(price);
+                    var scrappedData = priceSection.SelectNodes("//span[@class='slot-price']");
+                    foreach (var data in scrappedData)
+                    {
+                        string cleanedPrice = data.InnerText.Trim();
+                        double price = Double.Parse(cleanedPrice.Substring(1, cleanedPrice.Length - 1));
+                        prices.Add(price);
+                    }
                 }
+
             }
             catch
             {
