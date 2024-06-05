@@ -1,14 +1,11 @@
 ﻿using eComm.APPLICATION.Contracts;
 using eComm.APPLICATION.ExtensionMethods;
-using eComm.APPLICATION.Helpers;
 using eComm.DOMAIN.Models;
 using eComm.DOMAIN.Requests;
 using eComm.DOMAIN.Responses;
-using eComm.DOMAIN.Utilities;
 using eComm.PERSISTENCE.Contracts;
 using eComm.PERSISTENCE.Helpers;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using System.Security.Claims;
 
 namespace eComm.APPLICATION.Implementations
@@ -16,15 +13,13 @@ namespace eComm.APPLICATION.Implementations
     public class LoginService : ILoginService
     {
         private readonly IUserRepository _userRepository;
-        private readonly AuthHelper _authHelper;
+        private readonly IAuthHelper _authHelper;
         private readonly ILogger<LoginService> _logger;
-        private readonly IOptions<AppSettings> _appSettings;
-        public LoginService(IUserRepository userRepository, ILogger<LoginService> logger, IOptions<AppSettings> appSettings)
+        public LoginService(IUserRepository userRepository, ILogger<LoginService> logger, IAuthHelper authHelper)
         {
             _userRepository = userRepository;
-            _appSettings = appSettings;
-            _authHelper = new AuthHelper(_appSettings);
             _logger = logger;
+            _authHelper = authHelper;
         }
 
         public async Task<BaseResponse<AuthResponse>> Authenticate(UserLoginRequest request)
@@ -141,7 +136,7 @@ namespace eComm.APPLICATION.Implementations
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Eroare auth la {DateTime.Now}", ex.Message.ToString());
+                _logger.LogError($"Eroare register la {DateTime.Now}", ex.Message.ToString());
                 response.IsSuccess = false;
                 response.Message = ex.Message;
                 return response;
@@ -169,7 +164,7 @@ namespace eComm.APPLICATION.Implementations
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Eroare auth la {DateTime.Now}", ex.Message.ToString());
+                _logger.LogError($"Eroare register la {DateTime.Now}", ex.Message.ToString());
                 response.IsSuccess = false;
                 response.Message = ex.Message;
                 return response;

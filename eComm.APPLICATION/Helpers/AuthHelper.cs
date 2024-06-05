@@ -1,4 +1,5 @@
-﻿using eComm.DOMAIN.Models;
+﻿using eComm.APPLICATION.Contracts;
+using eComm.DOMAIN.Models;
 using eComm.DOMAIN.Utilities;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -9,7 +10,7 @@ using System.Text;
 
 namespace eComm.APPLICATION.Helpers
 {
-    public class AuthHelper
+    public class AuthHelper : IAuthHelper
     {
         private readonly AppSettings _appSettings;
         public AuthHelper(IOptions<AppSettings> appsettings)

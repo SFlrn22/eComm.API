@@ -1,4 +1,5 @@
 ﻿using eComm.APPLICATION.Contracts;
+using eComm.APPLICATION.Helpers;
 using eComm.APPLICATION.Implementations;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -12,6 +13,7 @@ namespace eComm.APPLICATION
                     .AddScoped<IRecommenderService, RecommenderService>()
                     .AddScoped<IProductService, ProductService>()
                     .AddScoped<ICartManagementService, CartManagementService>()
+                    .AddScoped<IAuthHelper, AuthHelper>()
                     .AddSingleton<IShareService, ShareService>();
             return services;
         }

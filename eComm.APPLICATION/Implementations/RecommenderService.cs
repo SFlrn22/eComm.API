@@ -33,6 +33,11 @@ namespace eComm.APPLICATION.Implementations
 
                 List<string> isbnList = await _externalRepository.GetRecommendedItemsForId(isbn, "content");
 
+                if (isbnList is null || isbnList.Count == 0)
+                {
+                    return rules;
+                }
+
                 foreach (string recommendation in isbnList)
                 {
                     List<string> secondRecommendations = await _externalRepository.GetRecommendedItemsForId(recommendation, "content");
@@ -76,7 +81,7 @@ namespace eComm.APPLICATION.Implementations
             try
             {
                 List<string> isbnList = await _externalRepository.GetRecommendedItemsForId(id, type);
-                if (isbnList is null)
+                if (isbnList is null || isbnList.Count == 0)
                 {
                     return new List<ProductDTO>();
                 }
@@ -98,6 +103,10 @@ namespace eComm.APPLICATION.Implementations
             try
             {
                 List<string> isbnList = await _externalRepository.GetTopTen();
+                if (isbnList is null || isbnList.Count == 0)
+                {
+                    return new List<ProductDTO>();
+                }
                 List<ProductDTO> products = await _productRepository.GetProductsByIsbnList(isbnList);
                 await _logRepository.LogSuccess("", products, _shareService.GetUsername(), _shareService.GetValue(), "GetTopTen");
                 return products;
