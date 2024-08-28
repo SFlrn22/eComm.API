@@ -149,10 +149,7 @@ namespace eComm.UnitTests
         public async void GetAssociationRules_WhenIsbnListEmpty_ShouldReturnEmptyList()
         {
             // ARRANGE
-            var isbnList = new List<string>
-            {
-
-            };
+            var isbnList = new List<string> { };
 
             var productList = _fixture.CreateMany<ProductDTO>().ToList();
 

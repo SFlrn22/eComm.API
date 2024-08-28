@@ -46,5 +46,30 @@ namespace eComm.IntegrationTests
             responseContent.Data.User.UserID.ShouldBe(0);
             responseContent.Data.User.Username.ShouldBe("user");
         }
+
+        [Fact]
+        public async Task Login_WhenInvalidUserOrPass_ReturnsOk()
+        {
+            //ARRANGE
+            UserLoginRequest payload = new UserLoginRequest
+            {
+                Username = "user",
+                Password = "test"
+            };
+
+            //ACT
+            var response = await _client.PostAsync(HttpHelper.Urls.AUTH_LOGIN, HttpHelper.GetJsonHttpContent(payload));
+
+            //ASSERT
+            response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+            response.Content.ShouldNotBeNull();
+
+            var responseContent = await response.Content.ReadFromJsonAsync<BaseResponse<AuthResponse>>();
+
+            responseContent!.Message.ShouldBe("Username sau parola gresita");
+            responseContent.IsSuccess.ShouldBeFalse();
+            responseContent.Errors.ShouldBeNull();
+            responseContent.Data.ShouldBeNull();
+        }
     }
 }

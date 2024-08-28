@@ -2,6 +2,7 @@
 using eComm.DOMAIN.Responses;
 using eComm.DOMAIN.Utilities;
 using eComm.PERSISTENCE.Helpers;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
@@ -22,7 +23,7 @@ namespace eComm.API.Controllers
             _appSettings = appSettings.Value;
         }
 
-        [Authorize]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpPost("/api/CreateStripeSession")]
         public async Task<IActionResult> CreateStripeSession()
         {
@@ -36,7 +37,7 @@ namespace eComm.API.Controllers
             return Ok(response);
         }
 
-        [Authorize]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpPost("/api/CloseStripeSession")]
         public async Task<IActionResult> CloseStripeSession()
         {

@@ -76,7 +76,6 @@ namespace eComm.APPLICATION.Implementations
                         prices.Add(price);
                     }
                 }
-
             }
             catch
             {

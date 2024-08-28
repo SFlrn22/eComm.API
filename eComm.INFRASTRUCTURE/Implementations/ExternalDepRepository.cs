@@ -52,19 +52,28 @@ namespace eComm.INFRASTRUCTURE.Implementations
 
         public async Task<List<ProductDTO>> GetProductFromVoiceRecord(IFormFile file)
         {
-            var fileContent = new StreamContent(file.OpenReadStream());
+            try
+            {
+                var fileContent = new StreamContent(file.OpenReadStream());
 
-            var contentToUpload = new MultipartFormDataContent();
-            contentToUpload.Add(fileContent, "file", file.FileName);
+                var contentToUpload = new MultipartFormDataContent();
+                contentToUpload.Add(fileContent, "file", file.FileName);
 
-            HttpResponseMessage response = await _httpClient.PostAsync($"/VTT", contentToUpload);
+                HttpResponseMessage response = await _httpClient.PostAsync($"/VTT", contentToUpload);
 
-            response.EnsureSuccessStatusCode();
-            string content = await response.Content.ReadAsStringAsync();
-            string title = JsonConvert.DeserializeObject<string>(content)!;
-            List<Product> products = await _productRepository.GetProductsByName(title);
+                response.EnsureSuccessStatusCode();
 
-            return products.MapProductsToDTO();
+                string content = await response.Content.ReadAsStringAsync();
+                string title = JsonConvert.DeserializeObject<string>(content)!;
+                List<Product> products = await _productRepository.GetProductsByName(title);
+
+                return products.MapProductsToDTO();
+            }
+            catch (Exception ex)
+            {
+                return new List<ProductDTO>();
+            }
+
         }
 
         public async Task<List<string>> GetRecommendedItemsForId(string id, string type)

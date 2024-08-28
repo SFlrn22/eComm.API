@@ -1,6 +1,7 @@
 ﻿using eComm.APPLICATION.Contracts;
 using eComm.DOMAIN.DTO;
 using eComm.DOMAIN.Models;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,7 +9,7 @@ namespace eComm.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class RecommenderController : ControllerBase
     {
         private readonly IRecommenderService _recommenderService;

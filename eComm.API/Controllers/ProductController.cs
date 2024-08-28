@@ -3,6 +3,7 @@ using eComm.DOMAIN.DTO;
 using eComm.DOMAIN.Models;
 using eComm.DOMAIN.Requests;
 using eComm.DOMAIN.Responses;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -37,7 +38,7 @@ namespace eComm.API.Controllers
             return Ok(response);
         }
 
-        [Authorize]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpGet("/api/GetProduct/{id}")]
         public async Task<IActionResult> GetProduct([FromRoute] int id)
         {
@@ -54,7 +55,7 @@ namespace eComm.API.Controllers
             return Ok(response);
         }
 
-        [Authorize]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpPost("/api/RateProduct")]
         public async Task<IActionResult> RateProduct([FromBody] RateProductRequest request)
         {
@@ -66,7 +67,7 @@ namespace eComm.API.Controllers
             return Ok(response);
         }
 
-        [Authorize]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpPost("/api/GetProductByVoice")]
         public async Task<IActionResult> GetProductByVoice()
         {
@@ -76,7 +77,7 @@ namespace eComm.API.Controllers
             return Ok(result);
         }
 
-        [Authorize]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpPost("/api/GetProductByImage")]
         public async Task<IActionResult> GetProductByImage()
         {
@@ -86,7 +87,7 @@ namespace eComm.API.Controllers
             return Ok(result);
         }
 
-        [Authorize]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpPost("/api/GetImageFromProductTitle")]
         public async Task<IActionResult> GetImageFromText(ImageFromTextRequest request)
         {

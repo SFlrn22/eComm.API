@@ -2,6 +2,7 @@
 using eComm.DOMAIN.DTO;
 using eComm.DOMAIN.Requests;
 using eComm.DOMAIN.Responses;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,6 +10,7 @@ namespace eComm.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class FavoritesController : ControllerBase
     {
         private readonly IProductService _productService;
